@@ -59,54 +59,28 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 
-
-HAL_StatusTypeDef Read_From_24LCxx(I2C_HandleTypeDef* hi2c,uint16_t DevAddress,uint16_t MemAddress,uint8_t* pData,uint16_t len){
-	HAL_StatusTypeDef returnValue;
-	uint8_t addr[2];
-
-	/* We compute the MSB and LSB parts of the memory address */
-	addr[0] = (uint8_t) ((MemAddress & 0xFF00) >> 8);
-	addr[1] = (uint8_t) (MemAddress & 0xFF);
-
-	/* First we send the memory location address where start reading data */
-	returnValue = HAL_I2C_Master_Transmit(hi2c, DevAddress, addr, 2, HAL_MAX_DELAY);
-	if(returnValue != HAL_OK)
-		return returnValue;
-
-	/* Next we can retrieve the data from EEPROM */
-	returnValue = HAL_I2C_Master_Receive(hi2c, DevAddress, pData, len, HAL_MAX_DELAY);
-
-	return returnValue;
- }
+/* USER CODE BEGIN PFP */
+/* Private function prototypes -----------------------------------------------*/
 
 
-HAL_StatusTypeDef Write_To_24LCxx(I2C_HandleTypeDef* hi2c,uint16_t DevAddress,uint16_t MemAddress,uint8_t* pData,uint16_t len){
-	HAL_StatusTypeDef returnValue;
-	uint8_t *data;
+uint16_t read_range(I2C_HandleTypeDef *hi2c, uint16_t DevAddress) {
+	  uint8_t range;
+	  uint8_t range_hb;
+	  char buffer[30];
 
-	/* First we allocate a temporary buffer to store the destination memory
-	* address and the data to store */
-	data = (uint8_t*)malloc(sizeof(uint8_t)*(len+2));
+	  HAL_I2C_Mem_Read(hi2c, DevAddress, 2, 1, &range, 1, HAL_MAX_DELAY);
+	  range_hb = range;
 
-	/* We compute the MSB and LSB parts of the memory address */
-	data[0] = (uint8_t) ((MemAddress & 0xFF00) >> 8);
-	data[1] = (uint8_t) (MemAddress & 0xFF);
+	  sprintf(buffer, "Range High %d\r\n", range_hb);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
 
-	/* And copy the content of the pData array in the temporary buffer */
-	memcpy(data+2, pData, len);
-
-	/* We are now ready to transfer the buffer over the I2C bus */
-	returnValue = HAL_I2C_Master_Transmit(hi2c, DevAddress, data, len + 2, HAL_MAX_DELAY);
-	if(returnValue != HAL_OK)
-		return returnValue;
-
-	free(data);
-
-	while(HAL_I2C_Master_Transmit(hi2c, DevAddress, 0, 0, HAL_MAX_DELAY) != HAL_OK);
-	return HAL_OK;
- }
+	  HAL_I2C_Mem_Read(hi2c, DevAddress, 3, 1, &range, 1, HAL_MAX_DELAY);
 
 
+	  sprintf(buffer, "Range Low %d\r\n", range);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+	  return ((uint16_t)range_hb << 8) | range;
+}
 
 /**
   * @brief  The application entry point.
@@ -115,41 +89,74 @@ HAL_StatusTypeDef Write_To_24LCxx(I2C_HandleTypeDef* hi2c,uint16_t DevAddress,ui
   */
 int main(void)
 {
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration----------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
   SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART2_UART_Init();
+
 
   uint8_t command[2];
   command[0] = 0x0;
   command[1] = 81;
 
-  uint8_t range;
+  char buffer[80];
+  uint16_t range;
   char *msg = "\nHello STM32 Lovers! Start Transmitting with UART.\r\n";
 
 
   HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 0xFFFF);
 
   HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&command, sizeof(command), HAL_MAX_DELAY);
-  char buffer[80];
-
-  uint8_t range_address = 2;
-
-  HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&range_address, 1, HAL_MAX_DELAY);
-  HAL_I2C_Master_Receive(&hi2c1, 0xE0, (uint8_t*)&range, sizeof(range), HAL_MAX_DELAY);
-  sprintf(buffer, "Range : %d", range);
-  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
 
 
-  range_address = 3;
-  HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&range_address, 1, HAL_MAX_DELAY);
-  HAL_I2C_Master_Receive(&hi2c1, 0xE0, (uint8_t*)&range, sizeof(range), HAL_MAX_DELAY);
-  sprintf(buffer, "Range : %d", range);
-  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+
+  uint32_t tick = HAL_GetTick();
+
   while (1)
   {
+	  if (HAL_GetTick() - tick > 1000L){
+
+		sprintf(buffer, "----------- \r\n");
+
+		HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&command, sizeof(command), HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+		HAL_Delay(500);
+		range = read_range(&hi2c1, 0xE0);
+
+		sprintf(buffer, "Range : %d\r\n", range);
+		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+
+		if ( HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 0){
+		  sprintf(buffer, "Yes\r\n");
+		}else{
+		  sprintf(buffer, "No\r\n");
+		}
+		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+		tick = HAL_GetTick();
+	  }
+
   }
+  /* USER CODE END 3 */
 
 }
 
@@ -219,7 +226,6 @@ static void MX_I2C1_Init(void)
   hi2c1.Init.OwnAddress2 = 0;
   hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-
   if (HAL_I2C_Init(&hi2c1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -246,14 +252,27 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-/** Pinout Configuration
+/** Configure pins as 
+        * Analog 
+        * Input 
+        * Output
+        * EVENT_OUT
+        * EXTI
 */
 static void MX_GPIO_Init(void)
 {
 
+  GPIO_InitTypeDef GPIO_InitStruct;
+
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
