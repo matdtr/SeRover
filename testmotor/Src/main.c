@@ -114,26 +114,46 @@ int main(void)
 	uint16_t cnt1 = 0, cnt2 = 0;
 	uint32_t tick = 0;
 	uint16_t diff = 0;
-	uint8_t i ;
   /* USER CODE END 2 */
+	uint8_t i;
+
+	char address = 128;
+	char command = 8;
+	char speed = 0;
+	char checksum = (address + command + speed) & 0b01111111;
+
+	HAL_Delay(2000);
+	/* HAL_UART_Transmit(&huart2, (uint8_t*)&address, sizeof(address), 0xFFFFFF);
+	HAL_UART_Transmit(&huart2, (uint8_t*)&command, sizeof(command), 0xFFFFFF);
+
+	HAL_UART_Transmit(&huart2, (uint8_t*) &speed, sizeof(speed), 0xFFFFFF);
+	HAL_UART_Transmit(&huart2, (uint8_t*) &checksum, sizeof(checksum),0xFFFFFF);
+	HAL_Delay(2); */
+
+    HAL_UART_Transmit(&huart6, (uint8_t*)&address, sizeof(address), 0xFFFFFF);
+    HAL_UART_Transmit(&huart6, (uint8_t*)&command, sizeof(command), 0xFFFFFF);
+    HAL_UART_Transmit(&huart6, (uint8_t*)&speed, sizeof(speed), 0xFFFFFF);
+    HAL_UART_Transmit(&huart6, (uint8_t*)&checksum, sizeof(checksum), 0xFFFFFF);
+
+	HAL_Delay(2000);
+
+	char command2 = 8;
+	char speed2 = 50;
+
+	char checksum2 = (address + command2 + speed2) & 0b01111111;
+	HAL_UART_Transmit(&huart6, (uint8_t*)&address, sizeof(address), 0xFFFFFF);
+	HAL_UART_Transmit(&huart6, (uint8_t*)&command2, sizeof(command2), 0xFFFFFF);
+	HAL_UART_Transmit(&huart6, (uint8_t*)&speed2, sizeof(speed2), 0xFFFFFF);
+	HAL_UART_Transmit(&huart6, (uint8_t*)&checksum2, sizeof(checksum2), 0xFFFFFF);
+
+	HAL_Delay(2000);
 
 
-	uint32_t value = 0;
 
-	HAL_UART_Receive(&huart6, (uint8_t*)&value,3, 0xFFFFFF);
-
-
-    HAL_UART_Transmit(&huart2, (uint8_t*)&value, sizeof(value), 0xFFFFFF);
-
-
-
-
-	//HAL_UART_Transmit(&huart6, (uint8_t*)&value, sizeof(value), 0xFFFFFF);
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     char msg[80];
-	uint8_t speed = 0;
 
 	while (1) {
 		/*
@@ -327,7 +347,7 @@ static void MX_USART6_UART_Init(void)
 {
 
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 9600;
+  huart6.Init.BaudRate = 38400;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;
