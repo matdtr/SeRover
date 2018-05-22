@@ -71,15 +71,21 @@ uint16_t read_range(I2C_HandleTypeDef *hi2c, uint16_t DevAddress) {
 	  HAL_I2C_Mem_Read(hi2c, DevAddress, 2, 1, &range, 1, HAL_MAX_DELAY);
 	  range_hb = range;
 
-	  sprintf(buffer, "Range High %d\r\n", range_hb);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
-
 	  HAL_I2C_Mem_Read(hi2c, DevAddress, 3, 1, &range, 1, HAL_MAX_DELAY);
 
-
-	  sprintf(buffer, "Range Low %d\r\n", range);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
 	  return ((uint16_t)range_hb << 8) | range;
+}
+
+void change_address_sonar(I2C_HandleTypeDef *hi2c, uint16_t DevAddress){
+	uint8_t data[4];
+
+	data[0] = 0xA0;
+	data[1] = 0xAA;
+	data[2] = 0xA5;
+	data[3] = 0xA5;
+	data[4] = 0xF2;
+
+	HAL_I2C_Master_Transmit(hi2c, DevAddress, (uint8_t*)data, sizeof(data), HAL_MAX_DELAY);
 }
 
 /**
