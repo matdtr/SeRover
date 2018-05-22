@@ -66,7 +66,6 @@ static void MX_USART2_UART_Init(void);
 uint16_t read_range(I2C_HandleTypeDef *hi2c, uint16_t DevAddress) {
 	  uint8_t range;
 	  uint8_t range_hb;
-	  char buffer[30];
 
 	  HAL_I2C_Mem_Read(hi2c, DevAddress, 2, 1, &range, 1, HAL_MAX_DELAY);
 	  range_hb = range;
