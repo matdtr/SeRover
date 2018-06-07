@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <targetDefinitions xmlns="http://openstm32.org/stm32TargetDefinitions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openstm32.org/stm32TargetDefinitions stm32TargetDefinitions.xsd">
   <board id="testled">
@@ -7,3 +8,14 @@
     <dbgDEV>ST-LinkV2-1</dbgDEV>
   </board>
 </targetDefinitions>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<targetDefinitions xmlns="http://openstm32.org/stm32TargetDefinitions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openstm32.org/stm32TargetDefinitions stm32TargetDefinitions.xsd">
+  <board id="testled">
+    <name>testled</name>
+    <mcuId>STM32F401RETx</mcuId>  <!-- mcu-->
+    <dbgIF>SWD</dbgIF>
+    <dbgDEV>ST-LinkV2-1</dbgDEV>
+  </board>
+</targetDefinitions>
+>>>>>>> 4c7eef3d8b54189e3b1134640179b23928040db1
