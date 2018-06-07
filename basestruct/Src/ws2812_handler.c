@@ -27,6 +27,7 @@ void ws2812_turn_off_leds()
 		set_led_color(i,0,0,0);
 
 	ws2812_apply_colors();
+
 }
 
 void fillBufferBlack() {

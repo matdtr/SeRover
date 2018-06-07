@@ -121,8 +121,6 @@ int main(void)
   HAL_NVIC_EnableIRQ(USART1_IRQn);
 
   HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-  ws2812_init_leds();
-
   char* data = "START ";
   char* data2= " RECEIVED ";
   char* data3[100];
@@ -132,15 +130,16 @@ int main(void)
 
 
   /* USER CODE END 2 */
- // printWelcomeMessage();
   int forward;
     int reverse;
     int right;
     int left;
-    int bright;
+    int bright= 1;
     int i = 0;
     motor_Init(&huart6);
     stop_motors(&huart6);
+	ws2812_init_leds();
+
     while (1)
     {
 	   /* HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
@@ -163,7 +162,7 @@ int main(void)
 			command = strtok(0, "#");
 			bright = atoi(command);
 
-			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d \t ", forward,reverse,right,left,bright);
+			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d ", forward,reverse,right,left,bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFFFF);
 			/* TODO: testareil codice per uso dei motori */
 
@@ -186,18 +185,20 @@ int main(void)
 				turn_left(&huart6, left);
 			}
 
-			if (bright > 0) {
-				/* TODO: testare accensione led */
-				  //ws2812_set_color_matrix((uint8_t)bright,(uint8_t)bright,(uint8_t)bright);
-			} else {
-				/* TODO: testare spegnimento led */
-				//ws2812_turn_off_leds();
-			}
-
 			if((forward==11) && (reverse == 11) && (left == 1) && (right == 1)){
 				/* TODO: autonomus mode func  */
 			}
+
 	  	}
+		if (bright > 1) {
+			/* TODO: testare accensione led */
+			ws2812_set_color_matrix(bright, bright, bright);
+		}
+		if (bright == 0) {
+			/* TODO: testare spegnimento led */
+			ws2812_set_color_matrix(0, 0, 0);
+			bright=1;
+		}
     }
 
 }
