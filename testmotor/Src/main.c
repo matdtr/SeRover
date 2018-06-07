@@ -118,7 +118,7 @@ int main(void)
 	uint8_t i;
 
 	char address = 128;
-	char command = 8;
+	char command = 11;
 	char speed = 0;
 	char checksum = (address + command + speed) & 0b01111111;
 
@@ -181,7 +181,7 @@ int main(void)
 
 					speed = ((diff / 4) / 60);
 
-					if ((TIM3->SMCR & 0x3) == 0x3) {
+					if ((TIM1->SMCR & 0x3) == 0x3) {
 						speed /= 2;
 					}
 

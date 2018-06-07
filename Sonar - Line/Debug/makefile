@@ -28,13 +28,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: Hello\ Word.elf
+all: Sonar\ -\ Line.elf
 
 # Tool invocations
-Hello\ Word.elf: $(OBJS) $(USER_OBJS) ../STM32F401RETx_FLASH.ld
+Sonar\ -\ Line.elf: $(OBJS) $(USER_OBJS) ../STM32F401RETx_FLASH.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Hello Word.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Sonar - Line.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -46,8 +46,8 @@ clean:
 
 post-build:
 	-@echo 'Generating binary and Printing size information:'
-	arm-none-eabi-objcopy -O binary "Hello Word.elf" "Hello Word.bin"
-	arm-none-eabi-size "Hello Word.elf"
+	arm-none-eabi-objcopy -O binary "Sonar - Line.elf" "Sonar - Line.bin"
+	arm-none-eabi-size "Sonar - Line.elf"
 	-@echo ' '
 
 .PHONY: all clean dependents

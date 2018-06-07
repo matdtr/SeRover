@@ -126,12 +126,16 @@ int main(void)
 
   char buffer[80];
   uint16_t range;
+  uint16_t range2;
+
   char *msg = "\nHello STM32 Lovers! Start Transmitting with UART.\r\n";
 
 
   HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 0xFFFF);
 
   HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&command, sizeof(command), HAL_MAX_DELAY);
+  HAL_Delay(500);
+
 
 
 
@@ -139,26 +143,27 @@ int main(void)
 
   while (1)
   {
-	  if (HAL_GetTick() - tick > 1000L){
+	 // if (HAL_GetTick() - tick > 1000L){
 
 		sprintf(buffer, "----------- \r\n");
 
 		HAL_I2C_Master_Transmit(&hi2c1, 0xE0, (uint8_t*)&command, sizeof(command), HAL_MAX_DELAY);
+
 		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
-		HAL_Delay(500);
 		range = read_range(&hi2c1, 0xE0);
+		HAL_Delay(500);
 
 		sprintf(buffer, "Range : %d\r\n", range);
 		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
 
-		if ( HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 0){
+		/* if ( HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 0){
 		  sprintf(buffer, "Yes\r\n");
 		}else{
 		  sprintf(buffer, "No\r\n");
 		}
-		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
-		tick = HAL_GetTick();
-	  }
+		HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 0xFFFF); */
+		//tick = HAL_GetTick();
+	 // }
 
   }
   /* USER CODE END 3 */
