@@ -197,7 +197,7 @@ int main(void)
 		if (bright == 0) {
 			/* TODO: testare spegnimento led */
 			ws2812_set_color_matrix(0, 0, 0);
-			bright=1;
+			HAL_Delay(100);
 		}
     }
 
