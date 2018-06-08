@@ -138,7 +138,7 @@ int main(void)
 	HAL_Delay(2000);
 
 	char command2 = 8;
-	char speed2 = 50;
+	char speed2 = 20;
 
 	char checksum2 = (address + command2 + speed2) & 0b01111111;
 	HAL_UART_Transmit(&huart6, (uint8_t*)&address, sizeof(address), 0xFFFFFF);
@@ -156,7 +156,7 @@ int main(void)
     char msg[80];
 
 	while (1) {
-		/*
+
 		if (HAL_GetTick() - tick > 1000L) {
 					cnt2 = __HAL_TIM_GET_COUNTER(&htim1);
 					if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&htim1)) {
@@ -193,7 +193,7 @@ int main(void)
 					tick = HAL_GetTick();
 				    cnt1 = __HAL_TIM_GET_COUNTER(&htim1);
 
-				}*/
+				}
 
 	}
   /* USER CODE END 3 */

@@ -1,0 +1,32 @@
+10:05:48 **** Incremental Build of configuration Debug for project testmotor ****
+make all 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/testmotor/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/testmotor/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/testmotor/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/testmotor/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/testmotor/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/testmotor/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:175:48: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+      HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg),0xFFFF);
+                                                ^~~~~~
+../Src/main.c:175:48: warning: incompatible implicit declaration of built-in function 'strlen'
+../Src/main.c:175:48: note: include '<string.h>' or provide a declaration of 'strlen'
+../Src/main.c:118:10: warning: unused variable 'i' [-Wunused-variable]
+  uint8_t i;
+          ^
+Finished building: ../Src/main.c
+ 
+Building target: testmotor.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "testmotor.elf" @"objects.list"   -lm
+Finished building target: testmotor.elf
+ 
+/Library/Developer/CommandLineTools/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "testmotor.elf" "testmotor.bin"
+arm-none-eabi-size "testmotor.elf"
+   text	   data	    bss	    dec	    hex	filename
+  10420	    120	   1832	  12372	   3054	testmotor.elf
+ 
+
+10:05:49 Build Finished (took 648ms)
+

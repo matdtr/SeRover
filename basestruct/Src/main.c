@@ -114,6 +114,8 @@ int main(void)
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_4);
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_3);
 
   MX_I2C1_Init();
   MX_I2C2_Init();
@@ -125,20 +127,26 @@ int main(void)
   char* data2= " RECEIVED ";
   char* data3[100];
   char* data4= " YES ";
-
+  uint16_t speed = 0;
   char c[11];
 
 
   /* USER CODE END 2 */
-  int forward;
-    int reverse;
-    int right;
-    int left;
+  int forward = 0;
+    int reverse = 0 ;
+    int right = 0;
+    int left = 0;
     int bright= 1;
     int i = 0;
     motor_Init(&huart6);
     stop_motors(&huart6);
 	ws2812_init_leds();
+
+	uint16_t tick = HAL_GetTick();
+	uint16_t counter = 0;
+	drive_forward(&huart6, 1);
+	HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
+	uint8_t motor_command = 0;
 
     while (1)
     {
@@ -162,27 +170,53 @@ int main(void)
 			command = strtok(0, "#");
 			bright = atoi(command);
 
-			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d ", forward,reverse,right,left,bright);
+			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d \n", forward,reverse,right,left,bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFFFF);
 			/* TODO: testareil codice per uso dei motori */
 
-			if (forward == reverse == right == left == 0) {
+			/*if (forward == reverse == right == left == 0) {
 				stop_motors(&huart6);
-			} else if (forward > 0) {
-				//avanti
+			}else{*/
 				drive_forward(&huart6, forward);
+				speed = forward;
+				drive_backwards(&huart6, reverse);
+				turn_right(&huart6, right);
+				turn_left(&huart6, left);
+			/*}
 
-			} else if (reverse > 0) {
+			if (forward > 0) {
+				//avanti
+				HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
+
+				drive_forward(&huart6, forward);
+				speed = forward;
+
+			}
+			if (reverse > 0) {
 				// indietro
 				drive_backwards(&huart6, reverse);
 
-			} else if (right > 0) {
+			}
+			if (right > 0) {
 				//destra
 				turn_right(&huart6, right);
 
-			} else if (left > 0) {
+			}
+			if (left > 0) {
 				//sinistra
 				turn_left(&huart6, left);
+			}*/
+			if (forward > 0 ){
+				speed = forward;
+
+			}else if (reverse > 0 ){
+				speed = reverse;
+			}else if (right > 0 ){
+				speed = right;
+			}else if (left > 0 ){
+				speed = left;
+			}else{
+				speed = 0;
 			}
 
 			if((forward==11) && (reverse == 11) && (left == 1) && (right == 1)){
@@ -198,6 +232,27 @@ int main(void)
 			/* TODO: testare spegnimento led */
 			ws2812_set_color_matrix(0, 0, 0);
 			HAL_Delay(100);
+		}
+
+		if (HAL_GetTick() - tick > 50L){
+			motor_encoder(&htim4, &huart2, &counter, &speed);
+			if (forward > 0) {
+				//avanti
+				drive_forward(&huart6, speed);
+			}
+			if (reverse > 0) {
+				// indietro
+				drive_backwards(&huart6, speed);
+			}
+			if (right > 0) {
+				//destra
+				turn_right(&huart6, speed);
+			}
+			if (left > 0) {
+				//sinistra
+				turn_left(&huart6, speed);
+			}
+			tick = HAL_GetTick();
 		}
     }
 

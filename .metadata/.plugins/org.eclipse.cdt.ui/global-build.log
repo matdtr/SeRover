@@ -1,0 +1,26 @@
+11:32:02 **** Incremental Build of configuration Debug for project basestruct ****
+make all 
+Building file: ../Src/motor_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
+../Src/motor_handler.c: In function 'motor_encoder':
+../Src/motor_handler.c:90:42: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+  HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
+                                          ^~~~~~
+../Src/motor_handler.c:90:42: warning: incompatible implicit declaration of built-in function 'strlen'
+../Src/motor_handler.c:90:42: note: include '<string.h>' or provide a declaration of 'strlen'
+Finished building: ../Src/motor_handler.c
+ 
+Building target: basestruct.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "basestruct.elf" @"objects.list"   -lm
+Finished building target: basestruct.elf
+ 
+/Library/Developer/CommandLineTools/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
+arm-none-eabi-size "basestruct.elf"
+   text	   data	    bss	    dec	    hex	filename
+  16440	    488	   5832	  22760	   58e8	basestruct.elf
+ 
