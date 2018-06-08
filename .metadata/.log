@@ -48,3 +48,51 @@ java.io.FileNotFoundException: /Users/ugopalatucci/Desktop/SeRover/.metadata/.pl
 
 !ENTRY org.eclipse.cdt.core 1 0 2018-06-08 09:23:44.288
 !MESSAGE Indexed 'testmotor' (19 sources, 64 headers) in 1.52 sec: 4,491 declarations; 28,129 references; 0 unresolved inclusions; 50 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.egit.core 4 0 2018-06-08 11:45:12.101
+!MESSAGE Git team provider configuration has gone missing.
+!STACK 0
+java.io.FileNotFoundException: /Users/ugopalatucci/Desktop/SeRover/.metadata/.plugins/org.eclipse.core.resources/.projects/RemoteSystemsTempFiles/org.eclipse.egit.core/GitProjectData.properties (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.eclipse.egit.core.project.GitProjectData.load(GitProjectData.java:613)
+	at org.eclipse.egit.core.project.GitProjectData.get(GitProjectData.java:218)
+	at org.eclipse.egit.core.GitProvider.getData(GitProvider.java:106)
+	at org.eclipse.egit.core.project.RepositoryMapping.getProjectData(RepositoryMapping.java:361)
+	at org.eclipse.egit.core.project.RepositoryMapping.findMapping(RepositoryMapping.java:377)
+	at org.eclipse.egit.core.project.RepositoryMapping.getMapping(RepositoryMapping.java:334)
+	at org.eclipse.egit.ui.Activator$ResourceRefreshJob.run(Activator.java:492)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.egit.core 4 0 2018-06-08 11:45:22.107
+!MESSAGE Git team provider configuration has gone missing.
+!STACK 0
+java.io.FileNotFoundException: /Users/ugopalatucci/Desktop/SeRover/.metadata/.plugins/org.eclipse.core.resources/.projects/RemoteSystemsTempFiles/org.eclipse.egit.core/GitProjectData.properties (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.eclipse.egit.core.project.GitProjectData.load(GitProjectData.java:613)
+	at org.eclipse.egit.core.project.GitProjectData.get(GitProjectData.java:218)
+	at org.eclipse.egit.core.GitProvider.getData(GitProvider.java:106)
+	at org.eclipse.egit.core.project.RepositoryMapping.getProjectData(RepositoryMapping.java:361)
+	at org.eclipse.egit.core.project.RepositoryMapping.findMapping(RepositoryMapping.java:377)
+	at org.eclipse.egit.core.project.RepositoryMapping.getMapping(RepositoryMapping.java:334)
+	at org.eclipse.egit.ui.Activator$ResourceRefreshJob.run(Activator.java:492)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.egit.core 4 0 2018-06-08 11:50:32.285
+!MESSAGE Git team provider configuration has gone missing.
+!STACK 0
+java.io.FileNotFoundException: /Users/ugopalatucci/Desktop/SeRover/.metadata/.plugins/org.eclipse.core.resources/.projects/RemoteSystemsTempFiles/org.eclipse.egit.core/GitProjectData.properties (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.eclipse.egit.core.project.GitProjectData.load(GitProjectData.java:613)
+	at org.eclipse.egit.core.project.GitProjectData.get(GitProjectData.java:218)
+	at org.eclipse.egit.core.GitProvider.getData(GitProvider.java:106)
+	at org.eclipse.egit.core.project.RepositoryMapping.getProjectData(RepositoryMapping.java:361)
+	at org.eclipse.egit.core.project.RepositoryMapping.findMapping(RepositoryMapping.java:377)
+	at org.eclipse.egit.core.project.RepositoryMapping.getMapping(RepositoryMapping.java:334)
+	at org.eclipse.egit.ui.Activator$ResourceRefreshJob.run(Activator.java:492)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

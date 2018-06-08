@@ -127,7 +127,8 @@ int main(void)
   char* data2= " RECEIVED ";
   char* data3[100];
   char* data4= " YES ";
-  uint16_t speed = 0;
+  uint16_t speed_command = 0;
+  uint16_t new_speed = 0;
   char c[11];
 
 
@@ -178,7 +179,6 @@ int main(void)
 				stop_motors(&huart6);
 			}else{*/
 				drive_forward(&huart6, forward);
-				speed = forward;
 				drive_backwards(&huart6, reverse);
 				turn_right(&huart6, right);
 				turn_left(&huart6, left);
@@ -207,16 +207,16 @@ int main(void)
 				turn_left(&huart6, left);
 			}*/
 			if (forward > 0 ){
-				speed = forward;
+				speed_command = forward;
 
 			}else if (reverse > 0 ){
-				speed = reverse;
+				speed_command = reverse;
 			}else if (right > 0 ){
-				speed = right;
+				speed_command = right;
 			}else if (left > 0 ){
-				speed = left;
+				speed_command = left;
 			}else{
-				speed = 0;
+				speed_command = 0;
 			}
 
 			if((forward==11) && (reverse == 11) && (left == 1) && (right == 1)){
@@ -235,22 +235,22 @@ int main(void)
 		}
 
 		if (HAL_GetTick() - tick > 50L){
-			motor_encoder(&htim4, &huart2, &counter, &speed);
+			new_speed = motor_encoder(&htim4, &huart2, &counter, speed_command, new_speed);
 			if (forward > 0) {
 				//avanti
-				drive_forward(&huart6, speed);
+				drive_forward(&huart6, new_speed);
 			}
 			if (reverse > 0) {
 				// indietro
-				drive_backwards(&huart6, speed);
+				drive_backwards(&huart6, new_speed);
 			}
 			if (right > 0) {
 				//destra
-				turn_right(&huart6, speed);
+				turn_right(&huart6, new_speed);
 			}
 			if (left > 0) {
 				//sinistra
-				turn_left(&huart6, speed);
+				turn_left(&huart6, new_speed);
 			}
 			tick = HAL_GetTick();
 		}

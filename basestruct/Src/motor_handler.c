@@ -6,7 +6,7 @@
  */
 
 #include "motor_handler.h"
-
+#include "math.h"
 
 void send_command_motor(UART_HandleTypeDef* huart,char command,char speed){
 	char address = H_BRIDGE_ADDR;
@@ -63,7 +63,7 @@ void motor_Init(UART_HandleTypeDef* huart)
 
 }
 
-void motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t* speed_command){
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_command, uint16_t actual_speed){
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
 	uint16_t speed = 0;
@@ -86,14 +86,6 @@ void motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t*
 			diff = (65535 - *counter) + cnt2;
 	}
 
-	sprintf(msg, "Difference: %d\r\n", diff);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
-
-	sprintf(msg, "CNT1: %d\r\n", *counter);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 0xFFFF);
-	sprintf(msg, "CNT2: %d\r\n", cnt2);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 0xFFFF);
-
 	speed = ((diff / 4) / 3);
 
 	if ((TIM1->SMCR & 0x3) == 0x3) {
@@ -106,16 +98,33 @@ void motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t*
 
 	*counter = __HAL_TIM_GET_COUNTER(htim);
 
-	if (*speed_command+(*speed_command - speed)> 127){
-			*speed_command = 127;
-		}
-	else
-		*speed_command = *speed_command + (*speed_command - speed);
-	sprintf(msg, "Speed Command: %d\r\n", *speed_command);
+	// Proporzione 127: 84 = Velocità_desiderata : Velcoità_calcolata
+	// 127 massimo comando e 84 massima velocità
+	// Velocità convertita in comandi dagli encoder
+	int encoder_speed = ceil((float)speed*1.5);
+
+	sprintf(msg, "Encoder Speed: %d\r\n", encoder_speed);
 
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 0xFFFF);
+	// 84 è la massima velocità.
+	if (encoder_speed > 127){
+		encoder_speed = 127;
+	}
+	if (encoder_speed > speed_command){
+		actual_speed = actual_speed - (encoder_speed - speed_command);
+		//actual_speed = speed_command - 1;
+		if (actual_speed > 127)
+			actual_speed = 0;
+	}else if (encoder_speed < speed_command){
+		actual_speed = actual_speed + (speed_command - encoder_speed);
+		//actual_speed = speed_command + 10;
+		if (actual_speed > 127)
+			actual_speed = 127;
+	}
 
-	/*if (*speed_command > 127){
-		*speed_command = 127;
-	}*/
+
+	sprintf(msg, "Speed Command: %d\r\n", actual_speed);
+
+	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 0xFFFF);
+	return actual_speed;
 }
