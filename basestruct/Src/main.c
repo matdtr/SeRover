@@ -114,21 +114,27 @@ int main(void)
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
-  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_4);
-  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_3);
+
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_1);
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_2);
 
   MX_I2C1_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(USART1_IRQn);
-
   HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+
   char* data = "START ";
   char* data2= " RECEIVED ";
   char* data3[100];
   char* data4= " YES ";
   uint16_t speed_command = 0;
-  uint16_t new_speed = 0;
+  uint16_t new_speed_command = 0;
+  uint16_t cnt1 = 0;
+  uint16_t speed_d = 0;
+
   char c[11];
 
 
@@ -144,7 +150,6 @@ int main(void)
 	ws2812_init_leds();
 
 	uint16_t tick = HAL_GetTick();
-	uint16_t counter = 0;
 	drive_forward(&huart6, 1);
 	HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
 	uint8_t motor_command = 0;
@@ -156,6 +161,7 @@ int main(void)
 		sprintf(data3, "%s", readBuf);
 	    HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFFFF);
 	    */
+
 	  	i = read_ble(c);
 
 	  	if (i ==1){
@@ -171,58 +177,43 @@ int main(void)
 			command = strtok(0, "#");
 			bright = atoi(command);
 
-			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d \n", forward,reverse,right,left,bright);
+			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward,reverse,right,left,bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFFFF);
 			/* TODO: testareil codice per uso dei motori */
-
-			/*if (forward == reverse == right == left == 0) {
+			if (forward == reverse == right == left == 0) {
 				stop_motors(&huart6);
-			}else{*/
+			}else{
 				drive_forward(&huart6, forward);
 				drive_backwards(&huart6, reverse);
 				turn_right(&huart6, right);
 				turn_left(&huart6, left);
-			/*}
-
+			}
 			if (forward > 0) {
 				//avanti
-				HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
-
 				drive_forward(&huart6, forward);
-				speed = forward;
-
-			}
-			if (reverse > 0) {
-				// indietro
-				drive_backwards(&huart6, reverse);
-
-			}
-			if (right > 0) {
-				//destra
-				turn_right(&huart6, right);
-
-			}
-			if (left > 0) {
-				//sinistra
-				turn_left(&huart6, left);
-			}*/
-			if (forward > 0 ){
 				speed_command = forward;
 
-			}else if (reverse > 0 ){
+			}else if (reverse > 0) {
+				// indietro
+				drive_backwards(&huart6, reverse);
 				speed_command = reverse;
-			}else if (right > 0 ){
+
+			}else if (right > 0) {
+				//destra
+				turn_right(&huart6, right);
 				speed_command = right;
-			}else if (left > 0 ){
+
+			}else if (left > 0) {
+				//sinistra
+				turn_left(&huart6, left);
 				speed_command = left;
 			}else{
 				speed_command = 0;
 			}
-
 			if((forward==11) && (reverse == 11) && (left == 1) && (right == 1)){
 				/* TODO: autonomus mode func  */
 			}
-
+			speed_d = ((speed_command *9) /2);
 	  	}
 		if (bright > 1) {
 			/* TODO: testare accensione led */
@@ -234,26 +225,39 @@ int main(void)
 			HAL_Delay(100);
 		}
 
-		if (HAL_GetTick() - tick > 50L){
-			new_speed = motor_encoder(&htim4, &huart2, &counter, speed_command, new_speed);
-			if (forward > 0) {
+		if (HAL_GetTick() - tick > 1000L) {
+			new_speed_command = motor_encoder(&htim3, &huart2, &cnt1,speed_d, speed_command);
+			speed_command = new_speed_command;
+			cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
+			tick = HAL_GetTick();
+			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
+			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3),0xFFFF);
+			 if (forward > 0) {
 				//avanti
-				drive_forward(&huart6, new_speed);
+				drive_forward(&huart6, new_speed_command);
 			}
 			if (reverse > 0) {
 				// indietro
-				drive_backwards(&huart6, new_speed);
+				drive_backwards(&huart6, new_speed_command);
 			}
 			if (right > 0) {
 				//destra
-				turn_right(&huart6, new_speed);
+				turn_right(&huart6, new_speed_command);
 			}
 			if (left > 0) {
 				//sinistra
-				turn_left(&huart6, new_speed);
+				turn_left(&huart6, new_speed_command);
 			}
-			tick = HAL_GetTick();
 		}
+
+
+
+
+		/* if (HAL_GetTick() - tick > 50L){
+			new_speed = motor_encoder(&htim4, &huart2, &counter, speed_command, new_speed);
+
+			tick = HAL_GetTick();
+		} */
     }
 
 }

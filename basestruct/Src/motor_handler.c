@@ -63,44 +63,54 @@ void motor_Init(UART_HandleTypeDef* huart)
 
 }
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_command, uint16_t actual_speed){
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter,uint16_t speed_d, uint16_t speed_command){
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
-	uint16_t speed = 0;
+	uint32_t speed = 0;
+	uint16_t errore = 0;
 	char msg[80];
 
 	cnt2 = __HAL_TIM_GET_COUNTER(htim);
 	if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim)) {
 		if (cnt2 < *counter)
 			diff = *counter - cnt2;
-		else if(cnt2 == *counter)
-			diff = 0;
 		else
 			diff = (65535 - cnt2) + *counter;
 	} else {
 		if (cnt2 > *counter)
 			diff = cnt2 - *counter;
-		else if(cnt2 == *counter)
-			diff = 0;
 		else
 			diff = (65535 - *counter) + cnt2;
 	}
 
-	speed = ((diff / 4) / 3);
-
-	if ((TIM1->SMCR & 0x3) == 0x3) {
-		speed /= 2;
+	speed = (((diff * 60)/ (64*19)));
+	if (speed == 3233){
+		speed = 0;
 	}
-
 
 	sprintf(msg, "Speed: %d\r\n", speed);
 	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
+	sprintf(msg, "Speed D: %d\r\n", speed_d);
+	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
-	*counter = __HAL_TIM_GET_COUNTER(htim);
+	errore = abs(speed_d - speed);
+
+	sprintf(msg, "Errore: %d\r\n", errore);
+	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
+
+	if ((errore >= 0) && (errore< 10)){
+		return speed_command;
+	}else if(speed_d < speed){
+		speed_command = speed_command - ceil((errore*2)/9);
+	}else if(speed_d > speed){
+		speed_command = speed_command + ceil((errore*2)/9);
+	}
+	return speed_command;
 
 	// Proporzione 127: 84 = Velocità_desiderata : Velcoità_calcolata
 	// 127 massimo comando e 84 massima velocità
 	// Velocità convertita in comandi dagli encoder
+	/*
 	int encoder_speed = ceil((float)speed*1.5);
 
 	sprintf(msg, "Encoder Speed: %d\r\n", encoder_speed);
@@ -123,8 +133,9 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	}
 
 
+
 	sprintf(msg, "Speed Command: %d\r\n", actual_speed);
 
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg), 0xFFFF);
-	return actual_speed;
+	return actual_speed; */
 }
