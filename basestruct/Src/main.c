@@ -115,8 +115,6 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
 
-  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_1);
-  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_2);
 
@@ -152,7 +150,6 @@ int main(void)
 	uint16_t tick = HAL_GetTick();
 	drive_forward(&huart6, 1);
 	HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
-	uint8_t motor_command = 0;
 
     while (1)
     {
@@ -227,37 +224,33 @@ int main(void)
 
 		if (HAL_GetTick() - tick > 1000L) {
 			new_speed_command = motor_encoder(&htim3, &huart2, &cnt1,speed_d, speed_command);
+			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
+			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFF);
+			if (new_speed_command != speed_command) {
+				if (forward > 0) {
+					//avanti
+					drive_forward(&huart6, new_speed_command);
+				}
+				if (reverse > 0) {
+					// indietro
+					drive_backwards(&huart6, new_speed_command);
+				}
+				if (right > 0) {
+					//destra
+					turn_right(&huart6, new_speed_command);
+				}
+				if (left > 0) {
+					//sinistra
+					turn_left(&huart6, new_speed_command);
+				}
+			}
 			speed_command = new_speed_command;
+			new_speed_command = 0;
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
 			tick = HAL_GetTick();
-			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
-			HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3),0xFFFF);
-			 if (forward > 0) {
-				//avanti
-				drive_forward(&huart6, new_speed_command);
-			}
-			if (reverse > 0) {
-				// indietro
-				drive_backwards(&huart6, new_speed_command);
-			}
-			if (right > 0) {
-				//destra
-				turn_right(&huart6, new_speed_command);
-			}
-			if (left > 0) {
-				//sinistra
-				turn_left(&huart6, new_speed_command);
-			}
 		}
 
 
-
-
-		/* if (HAL_GetTick() - tick > 50L){
-			new_speed = motor_encoder(&htim4, &huart2, &counter, speed_command, new_speed);
-
-			tick = HAL_GetTick();
-		} */
     }
 
 }
