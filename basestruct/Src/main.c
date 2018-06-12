@@ -146,6 +146,7 @@ int main(void)
   int i = 0;
   motor_Init(&huart6);
   stop_motors(&huart6);
+
   ws2812_init_leds();
 
   uint32_t tick = HAL_GetTick();

@@ -143,7 +143,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_Ha
 	}else if((speed_d < speed) && (speed_d > 250)){
 		speed_command = speed_command - (ceil((errore*2)/9));
 	}else if(speed_d > speed && (speed_d < 250)){
-		speed_command = speed_command + (ceil((errore*2)/9)) /4;
+		speed_command = speed_command + (ceil((errore*2)/9)) ;
 	}
 	if (speed_command > 101){
 		speed_command = 100;
