@@ -26,12 +26,7 @@ void ws2812_set_color_matrix(uint8_t red, uint8_t green, uint8_t blue);
  * @return none
  */
 void ws2812_apply_colors();
-/*! brief Turns off the led matrix
- *
- * @param none
- * @return none
- */
-void ws2812_turn_off_leds();
+
 /*! brief Sets the color of a single led
  *
  * @param LEDnumber index of the led
@@ -42,6 +37,7 @@ void ws2812_turn_off_leds();
  */
 void set_led_color(uint32_t LEDnumber, uint8_t RED, uint8_t GREEN, uint8_t BLUE);
 
+//void ws2812_turn_off_leds();
 //void ws2812_fadeEffect( uint8_t maxLevel );
 //void ws2812_setColor(int ledIdx, const uint8_t *color);
 

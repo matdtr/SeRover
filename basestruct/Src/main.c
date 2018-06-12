@@ -127,7 +127,6 @@ int main(void)
   HAL_NVIC_EnableIRQ(USART1_IRQn);
   HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
 
-  char* data = "START ";
   char data3[100];
   char rangestring[10] ;
   uint16_t speed_command = 0;
@@ -147,33 +146,36 @@ int main(void)
   int bright = 1;
   int i = 0;
   int autonoma = 0;
+
+  // ---- Motor Init -------
   motor_Init(&huart6);
   stop_motors(&huart6);
 
+  // ---- LED Init -------
   ws2812_init_leds();
 
   uint32_t tick = HAL_GetTick();
-  drive_forward(&huart6, 1);
-  send_command_sonar(&hi2c1,0xE0);
-  change_sonar_gain(&hi2c1, 0xE0, (uint8_t)2);
-  range_sonar1 = read_range_front(&hi2c1,0xE0);
+
+  // ---- Sonar Init -------
+  send_command_sonar(&hi2c1,FRONT_SONAR_ADDR);
+  change_sonar_gain(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
+  range_sonar1 = read_range_front(&hi2c1,FRONT_SONAR_ADDR); // serve o posso anche escludere?
+
 	while (1) {
 
 		i = read_ble(c);
 
 		if (i == 1) {
 			// ------ Parse del comando ----
-			parse_command(c, &forward, &reverse, &right, &left, &bright);
+			parse_command(c, &forward, &reverse, &right, &left, &bright,&speed_command);
 
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
 
-
 			// ----- Guida Autonoma START -----
 			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
-				/* Avanti con 10 se autonoma viene attivata  */
 				if (autonoma == 0){
 					autonoma = 1;
 					goto autonoma;
@@ -182,7 +184,6 @@ int main(void)
 					autonoma = 0;
 					reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				}
-				/* STOP altre direzioni per sicurezza */
 			}
 
 			/* STOP */
@@ -219,19 +220,18 @@ int main(void)
 
 		/* Comando per cambiare la luminosità della matrice del led */
 		if ((bright > 1)) {
-			/* TODO: testare accensione led */
 			ws2812_set_color_matrix(bright, bright, bright);
 		}
 		if ((bright == 0)) {
-			/* TODO: testare spegnimento led */
 			ws2812_set_color_matrix(0, 0, 0);
 			HAL_Delay(100);
 		}
+
 		autonoma:
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
-			range_sonar1 = read_range_front(&hi2c1,0xE0);
-			sprintf(rangestring, "Range: %d\n", range_sonar1);
+			range_sonar1 = read_range_front(&hi2c1,FRONT_SONAR_ADDR);
+			sprintf(rangestring, "Range: %lu \n", range_sonar1);
 			HAL_UART_Transmit(&huart2, (uint8_t*) rangestring, strlen(rangestring), 0xFFFF);
 
 			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
@@ -246,8 +246,6 @@ int main(void)
 			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command);
 			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
-
-
 			if (new_speed_command != speed_command) {
 				if (forward > 0) {
 					//avanti
@@ -276,7 +274,7 @@ int main(void)
 	}
 }
 
-void reset_commands(int* forward, int* reverse, int* right, int* left, int* speed_command){
+void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command){
 	*forward = 0;
 	*right = 0;
 	*left = 0;

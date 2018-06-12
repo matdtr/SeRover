@@ -21,14 +21,14 @@ void ws2812_init_leds()
 	fillBufferBlack();
 }
 
-void ws2812_turn_off_leds()
+/* void ws2812_turn_off_leds()
 {
 	for (int i = 0; i < N_LEDS; i++)
 		set_led_color(i,0,0,0);
 	fillBufferBlack();
 	ws2812_apply_colors();
 
-}
+} */
 
 void fillBufferBlack() {
 	/*Fill LED buffer - ALL OFF*/
@@ -68,7 +68,7 @@ void set_led_color(uint32_t LEDnumber, uint8_t RED, uint8_t GREEN, uint8_t BLUE)
 	uint32_t LEDindex;
 	LEDindex = LEDnumber % N_LEDS;
 
-	for (i = 0; i < 8; i++) // GREEN data
+	for (i = 0; i < 8; i++) // GREEN
 		tempBuffer[i] = ((GREEN << i) & 0x80) ? H_VAL : L_VAL;
 	for (i = 0; i < 8; i++) // RED
 		tempBuffer[8 + i] = ((RED << i) & 0x80) ? H_VAL : L_VAL;

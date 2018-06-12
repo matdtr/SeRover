@@ -70,12 +70,9 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_Ha
 	uint16_t cnt3 = 0;
 	uint16_t diff = 0;
 	uint16_t diff2 = 0;
-
 	uint32_t speed = 0;
 	uint32_t speed1 = 0;
-
 	uint32_t speed2 = 0;
-
 	uint16_t errore = 0;
 	uint16_t tmp = 0;
 	tmp = speed_command;

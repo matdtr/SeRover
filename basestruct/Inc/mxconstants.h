@@ -51,6 +51,8 @@
 
 #define H_BRIDGE_ADDR 128
 
+#define FRONT_SONAR_ADDR 0xE0
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
