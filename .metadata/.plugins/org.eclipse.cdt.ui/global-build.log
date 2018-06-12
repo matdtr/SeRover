@@ -1,16 +1,27 @@
-12:59:27 **** Incremental Build of configuration Debug for project basestruct ****
+18:26:13 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
-Building file: ../Src/motor_handler.c
+Building file: ../Src/main.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
-arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
-../Src/motor_handler.c: In function 'motor_encoder':
-../Src/motor_handler.c:97:42: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
-  HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
-                                          ^~~~~~
-../Src/motor_handler.c:97:42: warning: incompatible implicit declaration of built-in function 'strlen'
-../Src/motor_handler.c:97:42: note: include '<string.h>' or provide a declaration of 'strlen'
-Finished building: ../Src/motor_handler.c
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:166:4: warning: implicit declaration of function 'parse_command' [-Wimplicit-function-declaration]
+    parse_command(c, &forward, &reverse, &right, &left, &bright);
+    ^~~~~~~~~~~~~
+../Src/main.c:235:34: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+    sprintf(rangestring, "Range: %d\n", range_sonar1);
+                                  ^
+../Src/main.c:130:9: warning: unused variable 'data' [-Wunused-variable]
+   char* data = "START ";
+         ^~~~
+../Src/main.c: At top level:
+../Src/main.c:284:6: warning: conflicting types for 'parse_command'
+ void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
+      ^~~~~~~~~~~~~
+../Src/main.c:166:4: note: previous implicit declaration of 'parse_command' was here
+    parse_command(c, &forward, &reverse, &right, &left, &bright);
+    ^~~~~~~~~~~~~
+Finished building: ../Src/main.c
  
 Building target: basestruct.elf
 Invoking: MCU GCC Linker
@@ -22,5 +33,5 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  18988	    488	   5832	  25308	   62dc	basestruct.elf
+  22508	    488	   5832	  28828	   709c	basestruct.elf
  

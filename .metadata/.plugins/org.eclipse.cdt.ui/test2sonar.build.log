@@ -1,0 +1,35 @@
+17:14:20 **** Incremental Build of configuration Debug for project test2sonar ****
+make all 
+Building file: ../Src/sonar_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/test2sonar/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/test2sonar/Inc" -I"/Users/ugopalatucci/Desktop/test2sonar/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/test2sonar/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/test2sonar/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/test2sonar/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sonar_handler.d" -MT"Src/sonar_handler.o" -o "Src/sonar_handler.o" "../Src/sonar_handler.c"
+../Src/sonar_handler.c: In function 'change_sonar_gain':
+../Src/sonar_handler.c:45:45: warning: passing argument 5 of 'HAL_I2C_Mem_Write' makes pointer from integer without a cast [-Wint-conversion]
+  HAL_I2C_Mem_Write(hi2c, dev_address, 1, 1, gain, 1, HAL_MAX_DELAY);
+                                             ^~~~
+In file included from /Users/ugopalatucci/Desktop/test2sonar/Inc/stm32f4xx_hal_conf.h:320:0,
+                 from /Users/ugopalatucci/Desktop/test2sonar/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/test2sonar/Inc/common.h:5,
+                 from /Users/ugopalatucci/Desktop/test2sonar/Inc/sonar_handler.h:11,
+                 from ../Src/sonar_handler.c:8:
+/Users/ugopalatucci/Desktop/test2sonar/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:501:19: note: expected 'uint8_t * {aka unsigned char *}' but argument is of type 'uint8_t {aka unsigned char}'
+ HAL_StatusTypeDef HAL_I2C_Mem_Write(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+                   ^~~~~~~~~~~~~~~~~
+Finished building: ../Src/sonar_handler.c
+ 
+Building target: test2sonar.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "test2sonar.elf" @"objects.list"   -lm
+Finished building target: test2sonar.elf
+ 
+/Library/Developer/CommandLineTools/usr/bin/make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "test2sonar.elf" "test2sonar.bin"
+arm-none-eabi-size "test2sonar.elf"
+   text	   data	    bss	    dec	    hex	filename
+  11648	    120	   1736	  13504	   34c0	test2sonar.elf
+ 
+
+17:14:20 Build Finished (took 594ms)
+
