@@ -52,6 +52,7 @@
 #include "lane_handler.h"
 #include "ws2812_handler.h"
 #include "motor_handler.h"
+#include "autonomus_handler.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -117,6 +118,8 @@ int main(void)
 
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_1);
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
 
   MX_I2C1_Init();
   MX_I2C2_Init();
@@ -129,6 +132,7 @@ int main(void)
   uint16_t speed_command = 0;
   uint16_t new_speed_command = 0;
   uint16_t cnt1 = 0;
+  uint16_t cnt2 = 0;
   uint16_t speed_d = 0;
 
   char c[11];
@@ -168,21 +172,23 @@ int main(void)
 			command = strtok(0, "#");
 			right = atoi(command);
 			command = strtok(0, "#");
-			bright = atoi(command);
+			if (command == NULL){
+				bright = 1;
+			}else {
+				bright = atoi(command);
+			}
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward,
-					reverse, right, left, bright);
+											reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),
-					0xFFFFFF);
+											0xFFFFFF);
+
 			/* TODO: testareil codice per uso dei motori */
-			if (forward == reverse == right == left == 0) {
+			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
 				stop_motors(&huart6);
-			} else {
-				drive_forward(&huart6, forward);
-				drive_backwards(&huart6, reverse);
-				turn_right(&huart6, right);
-				turn_left(&huart6, left);
 			}
+
+
 			if (forward > 0) {
 				//avanti
 				drive_forward(&huart6, forward);
@@ -211,12 +217,11 @@ int main(void)
 			}
 			speed_d = ((speed_command * 9) / 2);
 		}
-
-		if (bright > 1) {
+		if ((bright > 1)) {
 			/* TODO: testare accensione led */
 			ws2812_set_color_matrix(bright, bright, bright);
 		}
-		if (bright == 0) {
+		if ((bright == 0)) {
 			/* TODO: testare spegnimento led */
 			ws2812_set_color_matrix(0, 0, 0);
 			HAL_Delay(100);
@@ -224,7 +229,7 @@ int main(void)
 
 
 		if (HAL_GetTick() - tick > 1000L) {
-			new_speed_command = motor_encoder(&htim3, &huart2, &cnt1,speed_d, speed_command);
+			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command);
 			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
 			if (new_speed_command != speed_command) {
@@ -248,6 +253,7 @@ int main(void)
 			speed_command = new_speed_command;
 			new_speed_command = 0;
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
+			cnt2 = __HAL_TIM_GET_COUNTER(&htim4);
 			tick = HAL_GetTick();
 		}
 	}

@@ -65,14 +65,22 @@ void motor_Init(UART_HandleTypeDef* huart)
 
 }
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter,uint16_t speed_d, uint16_t speed_command){
+uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_HandleTypeDef* huart, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command){
 	uint16_t cnt2 = 0;
+	uint16_t cnt3 = 0;
 	uint16_t diff = 0;
+	uint16_t diff2 = 0;
+
 	uint32_t speed = 0;
+	uint32_t speed1 = 0;
+
+	uint32_t speed2 = 0;
+
 	uint16_t errore = 0;
 	uint16_t tmp = 0;
 	tmp = speed_command;
 	char msg[80];
+
 	cnt2 = __HAL_TIM_GET_COUNTER(htim);
 	if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim)) {
 		if (cnt2 < *counter)
@@ -86,9 +94,33 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 			diff = (65535 - *counter) + cnt2;
 	}
 
-	speed = (((diff * 60)/ (64*19)));
-	if (speed == 3233){
-		speed = 0;
+	speed1 = (((diff * 60)/ (64*19)));
+	if (speed1 == 3233){
+		speed1 = 0;
+	}
+
+	cnt3 = __HAL_TIM_GET_COUNTER(htim2);
+	if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim2)) {
+		if (cnt3 < *counter2)
+			diff2 = *counter2 - cnt3;
+		else
+			diff2 = (65535 - cnt3) + *counter2;
+	} else {
+		if (cnt3 > *counter2)
+			diff2 = cnt3 - *counter2;
+		else
+			diff2 = (65535 - *counter2) + cnt3;
+	}
+
+	speed2 = (((diff2 * 60)/ (64*19)));
+	if (speed2 == 3233){
+		speed2 = 0;
+	}
+
+	if(speed1<speed2){
+		speed = speed1;
+	}else {
+		speed = speed2;
 	}
 
 	sprintf(msg, "Speed: %d\r\n", speed);
@@ -101,7 +133,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 
 	sprintf(msg, "Errore: %d\r\n", errore);
 	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
-
+	//TODO  regolazione della retroazione
 	if ((errore >= 0) && (errore< 15)){
 		return speed_command;
 	}else if((speed_d < speed) && (speed_d <= 250)){
@@ -111,7 +143,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	}else if((speed_d < speed) && (speed_d > 250)){
 		speed_command = speed_command - (ceil((errore*2)/9));
 	}else if(speed_d > speed && (speed_d < 250)){
-		speed_command = speed_command + (ceil((errore*2)/9));
+		speed_command = speed_command + (ceil((errore*2)/9)) /4;
 	}
 	if (speed_command > 101){
 		speed_command = 100;
