@@ -12,6 +12,8 @@ uint16_t read_range_front(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
 	  uint8_t range;
 	  uint8_t range_hb;
 
+	  send_command_sonar(hi2c,dev_address);
+	  HAL_Delay(70);
 	  HAL_I2C_Mem_Read(hi2c, dev_address, 2, 1, &range, 1, HAL_MAX_DELAY);
 	  range_hb = range;
 
@@ -39,4 +41,8 @@ void send_command_sonar(I2C_HandleTypeDef *hi2c, uint16_t dev_address){
 
 	HAL_I2C_Master_Transmit(hi2c, dev_address, (uint8_t*)&command, sizeof(command), HAL_MAX_DELAY);
 
+}
+
+void change_sonar_gain(I2C_HandleTypeDef *hi2c, uint16_t dev_address, uint8_t gain){
+	HAL_I2C_Mem_Write(hi2c, dev_address, 1, 1, gain, 1, HAL_MAX_DELAY);
 }

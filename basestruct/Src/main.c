@@ -129,11 +129,13 @@ int main(void)
 
   char* data = "START ";
   char data3[100];
+  char rangestring[10] ;
   uint16_t speed_command = 0;
   uint16_t new_speed_command = 0;
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
   uint16_t speed_d = 0;
+  uint32_t range_sonar1;
 
   char c[11];
 
@@ -144,6 +146,7 @@ int main(void)
   int left = 0;
   int bright = 1;
   int i = 0;
+  int autonoma = 0;
   motor_Init(&huart6);
   stop_motors(&huart6);
 
@@ -151,19 +154,15 @@ int main(void)
 
   uint32_t tick = HAL_GetTick();
   drive_forward(&huart6, 1);
-  //HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
-
+  send_command_sonar(&hi2c1,0xE0);
+  change_sonar_gain(&hi2c1, 0xE0, (uint8_t)2);
+  range_sonar1 = read_range_front(&hi2c1,0xE0);
 	while (1) {
-		/* HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), 0xFFFFFF);
-		 HAL_UART_Receive(&huart1, (uint8_t*)readBuf,11,0xFFFFFF);
-		 sprintf(data3, "%s", readBuf);
-		 HAL_UART_Transmit(&huart2, (uint8_t*)data3, strlen(data3), 0xFFFFFF);
-		 */
 
 		i = read_ble(c);
 
 		if (i == 1) {
-
+			// ------ Parse del comando ----
 			char* command = strtok(c, "#");
 			forward = atoi(command);
 			command = strtok(0, "#");
@@ -179,22 +178,36 @@ int main(void)
 				bright = atoi(command);
 			}
 
-			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward,
-											reverse, right, left, bright);
-			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),
-											0xFFFFFF);
+			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
+			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-			/* TODO: testareil codice per uso dei motori */
+			/* STOP */
 			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
 				stop_motors(&huart6);
 			}
 
+			// ----- Guida Autonoma START -----
+			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
+				/* Avanti con 10 se autonoma viene attivata  */
+				if (autonoma == 0){
+					autonoma = 1;
+					forward = 10;
+				}else{
+					/* Altrimenti fermati e disattiva  la guida autonoma */
+					autonoma = 0;
+					forward = 0;
+				}
+				/* STOP altre direzioni per sicurezza */
+				reverse = 0;
+				left = 0;
+				right = 0;
+			}
 
+			/* Comandi al rover per le diverse direzioni */
 			if (forward > 0) {
 				//avanti
 				drive_forward(&huart6, forward);
 				speed_command = forward;
-
 			} else if (reverse > 0) {
 				// indietro
 				drive_backwards(&huart6, reverse);
@@ -212,12 +225,13 @@ int main(void)
 			} else {
 				speed_command = 0;
 			}
-			if ((forward == 11) && (reverse == 11) && (left == 1)
-					&& (right == 1)) {
-				/* TODO: autonomus mode func  */
-			}
+
+			// Conversione della velocità per l'encoder
 			speed_d = ((speed_command * 9) / 2);
+
 		}
+
+		/* Comando per cambiare la luminosità della matrice del led */
 		if ((bright > 1)) {
 			/* TODO: testare accensione led */
 			ws2812_set_color_matrix(bright, bright, bright);
@@ -228,11 +242,30 @@ int main(void)
 			HAL_Delay(100);
 		}
 
+		/* Leggi i sonar per la guida autonoma */
+		if (autonoma == 1){
+			range_sonar1 = read_range_front(&hi2c1,0xE0);
+			sprintf(rangestring, "Range: %d\n", range_sonar1);
+			HAL_UART_Transmit(&huart2, (uint8_t*) rangestring, strlen(rangestring), 0xFFFF);
 
-		if (HAL_GetTick() - tick > 1000L) {
+			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
+			if (range_sonar1 < 20){
+				forward = 0;
+				right = 0;
+				left = 0;
+				reverse = 0;
+				speed_command = 0;
+				stop_motors(&huart6);
+			}
+		}
+
+		/* ------ ENCODER --------- */
+		if (HAL_GetTick() - tick > 100L) {
 			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command);
 			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
+
+
 			if (new_speed_command != speed_command) {
 				if (forward > 0) {
 					//avanti
@@ -257,6 +290,7 @@ int main(void)
 			cnt2 = __HAL_TIM_GET_COUNTER(&htim4);
 			tick = HAL_GetTick();
 		}
+		/* ----- FINE ENCODER ------  */
 	}
 }
 
