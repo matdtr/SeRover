@@ -130,7 +130,7 @@ int main(void)
   char* data = "START ";
   char data3[100];
   char rangestring[10] ;
-  uint16_t speed_command = 0;
+  int speed_command = 0;
   uint16_t new_speed_command = 0;
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
@@ -163,54 +163,36 @@ int main(void)
 
 		if (i == 1) {
 			// ------ Parse del comando ----
-			parse_command(c, &forward, &reverse, &right, &left, &bright);
-
+			char* command = strtok(c, "#");
+			parse_command(command, &forward, &reverse, &right, &left);
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-
+			/* STOP */
+			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
+				stop_motors(&huart6);
+			}
 
 			// ----- Guida Autonoma START -----
 			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
 				/* Avanti con 10 se autonoma viene attivata  */
 				if (autonoma == 0){
 					autonoma = 1;
-					goto autonoma;
+					forward = 10;
 				}else{
 					/* Altrimenti fermati e disattiva  la guida autonoma */
 					autonoma = 0;
-					reset_commands(&forward, &reverse, &right, &left, &speed_command);
+					forward = 0;
 				}
 				/* STOP altre direzioni per sicurezza */
+				reverse = 0;
+				left = 0;
+				right = 0;
 			}
 
-			/* STOP */
-			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
-				stop_motors(&huart6);
-			}
 			/* Comandi al rover per le diverse direzioni */
-			if (forward > 0) {
-				//avanti
-				drive_forward(&huart6, forward);
-				speed_command = forward;
-			} else if (reverse > 0) {
-				// indietro
-				drive_backwards(&huart6, reverse);
-				speed_command = reverse;
-
-			} else if (right > 0) {
-				//destra
-				turn_right(&huart6, right);
-				speed_command = right;
-
-			} else if (left > 0) {
-				//sinistra
-				turn_left(&huart6, left);
-				speed_command = left;
-			} else {
-				speed_command = 0;
-			}
+			set_speed_from_commands(forward, reverse, right, left);
 
 			// Conversione della velocità per l'encoder
 			speed_d = ((speed_command * 9) / 2);
@@ -227,7 +209,7 @@ int main(void)
 			ws2812_set_color_matrix(0, 0, 0);
 			HAL_Delay(100);
 		}
-		autonoma:
+
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 			range_sonar1 = read_range_front(&hi2c1,0xE0);
@@ -236,7 +218,11 @@ int main(void)
 
 			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
 			if (range_sonar1 < 20){
-				reset_commands(&forward, &reverse, &right, &left, &speed_command);
+				forward = 0;
+				right = 0;
+				left = 0;
+				reverse = 0;
+				speed_command = 0;
 				stop_motors(&huart6);
 			}
 		}
@@ -248,57 +234,89 @@ int main(void)
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
 
 
-			if (new_speed_command != speed_command) {
-				if (forward > 0) {
-					//avanti
-					drive_forward(&huart6, new_speed_command);
-				}
-				if (reverse > 0) {
-					// indietro
-					drive_backwards(&huart6, new_speed_command);
-				}
-				if (right > 0) {
-					//destra
-					turn_right(&huart6, new_speed_command);
-				}
-				if (left > 0) {
-					//sinistra
-					turn_left(&huart6, new_speed_command);
-				}
-			}
+			if (new_speed_command != speed_command)
+				set_new_speed_command(new_speed_command, forward, reverse, right, left);
+
 			speed_command = new_speed_command;
 			new_speed_command = 0;
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
 			cnt2 = __HAL_TIM_GET_COUNTER(&htim4);
 			tick = HAL_GetTick();
 		}
-		/* ----- FINE ENCODER ------  */
+		/* FINE ENCODER ------  */
 	}
 }
 
-void reset_commands(int* forward, int* reverse, int* right, int* left, int* speed_command){
-	*forward = 0;
-	*right = 0;
-	*left = 0;
-	*reverse = 0;
-	*speed_command = 0;
-}
-void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
-	char* command = strtok(c, "#");
-	*forward = atoi(command);
-	command = strtok(0, "#");
-	*reverse = atoi(command);
-	command = strtok(0, "#");
-	*left = atoi(command);
-	command = strtok(0, "#");
-	*right = atoi(command);
-	command = strtok(0, "#");
-	if (command == NULL){
+/*
+ * Parse della stringa command.
+ */
+void parse_command(char** command, int* forward, int* reverse, int* right, int* left, int* bright){
+	*forward = atoi(*command);
+	*command = strtok(0, "#");
+	*reverse = atoi(*command);
+	*command = strtok(0, "#");
+	*left = atoi(*command);
+	*command = strtok(0, "#");
+	*right = atoi(*command);
+	*command = strtok(0, "#");
+	if (*command == NULL){
 		*bright = 1;
 	}else {
-		*bright = atoi(command);
+		*bright = atoi(*command);
 	}
 }
+
+/*
+ * Inviare i diversi comandi e restituire la velocità
+ */
+int set_speed_from_commands(int forward, int reverse, int right, int left){
+	int speed_command = 0;
+
+	if (forward > 0) {
+		//avanti
+		drive_forward(&huart6, forward);
+		speed_command = forward;
+	} else if (reverse > 0) {
+		// indietro
+		drive_backwards(&huart6, reverse);
+		speed_command = reverse;
+
+	} else if (right > 0) {
+		//destra
+		turn_right(&huart6, right);
+		speed_command = right;
+
+	} else if (left > 0) {
+		//sinistra
+		turn_left(&huart6, left);
+		speed_command = left;
+	}
+
+	return speed_command;
+}
+
+/*
+ * Inviare i comandi con la nuova velocità calcolata dall'encoder
+ */
+void set_new_speed_command(uint16_t new_speed_command, int forward,int reverse,int right,int left){
+	if (forward > 0) {
+		//avanti
+		drive_forward(&huart6, new_speed_command);
+	}
+	if (reverse > 0) {
+		// indietro
+		drive_backwards(&huart6, new_speed_command);
+	}
+	if (right > 0) {
+		//destra
+		turn_right(&huart6, new_speed_command);
+	}
+	if (left > 0) {
+		//sinistra
+		turn_left(&huart6, new_speed_command);
+	}
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  /* Set transmission flag: transfer complete*/
  UartReady = SET;

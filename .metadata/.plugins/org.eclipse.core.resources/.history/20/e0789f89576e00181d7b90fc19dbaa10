@@ -144,7 +144,7 @@ int main(void)
   int reverse = 0;
   int right = 0;
   int left = 0;
-  int bright = 1;
+  int bright = 0;
   int i = 0;
   int autonoma = 0;
   motor_Init(&huart6);
@@ -163,32 +163,46 @@ int main(void)
 
 		if (i == 1) {
 			// ------ Parse del comando ----
-			parse_command(c, &forward, &reverse, &right, &left, &bright);
-
+			char* command = strtok(c, "#");
+			forward = atoi(command);
+			command = strtok(0, "#");
+			reverse = atoi(command);
+			command = strtok(0, "#");
+			left = atoi(command);
+			command = strtok(0, "#");
+			right = atoi(command);
+			command = strtok(0, "#");
+			if (command == NULL){
+				bright = 0;
+			}else {
+				bright = atoi(command);
+			}
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-
+			/* STOP */
+			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
+				stop_motors(&huart6);
+			}
 
 			// ----- Guida Autonoma START -----
 			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
 				/* Avanti con 10 se autonoma viene attivata  */
 				if (autonoma == 0){
 					autonoma = 1;
-					goto autonoma;
+					forward = 10;
 				}else{
 					/* Altrimenti fermati e disattiva  la guida autonoma */
 					autonoma = 0;
-					reset_commands(&forward, &reverse, &right, &left, &speed_command);
+					forward = 0;
 				}
 				/* STOP altre direzioni per sicurezza */
+				reverse = 0;
+				left = 0;
+				right = 0;
 			}
 
-			/* STOP */
-			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
-				stop_motors(&huart6);
-			}
 			/* Comandi al rover per le diverse direzioni */
 			if (forward > 0) {
 				//avanti
@@ -218,16 +232,10 @@ int main(void)
 		}
 
 		/* Comando per cambiare la luminosità della matrice del led */
-		if ((bright > 1)) {
-			/* TODO: testare accensione led */
-			ws2812_set_color_matrix(bright, bright, bright);
-		}
-		if ((bright == 0)) {
-			/* TODO: testare spegnimento led */
-			ws2812_set_color_matrix(0, 0, 0);
-			HAL_Delay(100);
-		}
-		autonoma:
+					/* TODO: testare accensione led */
+		ws2812_set_color_matrix(bright, bright, bright);
+		HAL_Delay(100);
+
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 			range_sonar1 = read_range_front(&hi2c1,0xE0);
@@ -236,7 +244,11 @@ int main(void)
 
 			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
 			if (range_sonar1 < 20){
-				reset_commands(&forward, &reverse, &right, &left, &speed_command);
+				forward = 0;
+				right = 0;
+				left = 0;
+				reverse = 0;
+				speed_command = 0;
 				stop_motors(&huart6);
 			}
 		}
@@ -276,29 +288,6 @@ int main(void)
 	}
 }
 
-void reset_commands(int* forward, int* reverse, int* right, int* left, int* speed_command){
-	*forward = 0;
-	*right = 0;
-	*left = 0;
-	*reverse = 0;
-	*speed_command = 0;
-}
-void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
-	char* command = strtok(c, "#");
-	*forward = atoi(command);
-	command = strtok(0, "#");
-	*reverse = atoi(command);
-	command = strtok(0, "#");
-	*left = atoi(command);
-	command = strtok(0, "#");
-	*right = atoi(command);
-	command = strtok(0, "#");
-	if (command == NULL){
-		*bright = 1;
-	}else {
-		*bright = atoi(command);
-	}
-}
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  /* Set transmission flag: transfer complete*/
  UartReady = SET;

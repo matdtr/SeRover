@@ -180,7 +180,11 @@ int main(void)
 				}else{
 					/* Altrimenti fermati e disattiva  la guida autonoma */
 					autonoma = 0;
-					reset_commands(&forward, &reverse, &right, &left, &speed_command);
+					forward = 0;
+					reverse = 0;
+					left = 0;
+					right = 0;
+
 				}
 				/* STOP altre direzioni per sicurezza */
 			}
@@ -236,7 +240,11 @@ int main(void)
 
 			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
 			if (range_sonar1 < 20){
-				reset_commands(&forward, &reverse, &right, &left, &speed_command);
+				forward = 0;
+				right = 0;
+				left = 0;
+				reverse = 0;
+				speed_command = 0;
 				stop_motors(&huart6);
 			}
 		}

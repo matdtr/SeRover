@@ -180,7 +180,11 @@ int main(void)
 				}else{
 					/* Altrimenti fermati e disattiva  la guida autonoma */
 					autonoma = 0;
-					reset_commands(&forward, &reverse, &right, &left, &speed_command);
+					forward = 0;
+					reverse = 0;
+					left = 0;
+					right = 0;
+
 				}
 				/* STOP altre direzioni per sicurezza */
 			}
