@@ -42,6 +42,7 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_tim2_ch1;
 extern UART_HandleTypeDef huart1;
+extern TIM_HandleTypeDef htim11;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -221,6 +222,10 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART2_IRQn 1 */
 }
 
+void TIM11_IRQHandler(void){
+
+	  HAL_TIM_IRQHandler(&htim11);
+}
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

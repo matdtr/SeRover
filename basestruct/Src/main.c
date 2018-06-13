@@ -302,6 +302,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  UartReady = SET;
 }
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
+	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
+	// testare prima il funzionamento della callback
+	// bisogna abilitare il timer quando è in mod autonoma via interrupt e abilitare anche le interr del timer 11
+
+	// HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
+    // HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /**
   * @brief System Clock Configuration
   * @retval None
