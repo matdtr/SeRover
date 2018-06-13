@@ -62,7 +62,6 @@
 /* Private variables ---------------------------------------------------------*/
 char readBuf[11];
 __IO ITStatus UartReady = SET;
-int autonoma = 0;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -146,6 +145,7 @@ int main(void)
   int left = 0;
   int bright = 1;
   int i = 0;
+  int autonoma = 0;
 
   // ---- Motor Init -------
   motor_Init(&huart6);
@@ -273,7 +273,29 @@ int main(void)
 	}
 }
 
-
+void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command){
+	*forward = 0;
+	*right = 0;
+	*left = 0;
+	*reverse = 0;
+	*speed_command = 0;
+}
+void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
+	char* command = strtok(c, "#");
+	*forward = atoi(command);
+	command = strtok(0, "#");
+	*reverse = atoi(command);
+	command = strtok(0, "#");
+	*left = atoi(command);
+	command = strtok(0, "#");
+	*right = atoi(command);
+	command = strtok(0, "#");
+	if (command == NULL){
+		*bright = 1;
+	}else {
+		*bright = atoi(command);
+	}
+}
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  /* Set transmission flag: transfer complete*/
  UartReady = SET;
@@ -287,6 +309,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	// HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
     // HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
 }
+
+
+
+
+
+
+
+
+
 
 
 
