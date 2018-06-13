@@ -62,7 +62,6 @@
 /* Private variables ---------------------------------------------------------*/
 char readBuf[11];
 __IO ITStatus UartReady = SET;
-int autonoma = 0;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -146,6 +145,7 @@ int main(void)
   int left = 0;
   int bright = 1;
   int i = 0;
+  int autonoma = 0;
 
   // ---- Motor Init -------
   motor_Init(&huart6);

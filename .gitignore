@@ -59,10 +59,31 @@ Sonar - Line/Debug/objects.list
 Sonar - Line/Debug/makefile
 Sonar - Line/Debug/Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 Sonar - Line/Debug/Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
+<<<<<<< HEAD
 Sonar - Line/Debug/makefile
 Sonar - Line/Debug/objects.list
 Sonar - Line/Debug/objects.mk
 Sonar - Line/Debug/Sonar - Line.bin
 Sonar - Line/Debug/sources.mk
 *.mk
+=======
+*.pdom
+*.pdom
+*.prefs
+*.prefs
+*.index
 *.xml
+>>>>>>> 1400411fd5493d19f252d2bdaf56d570a24dcf4f
+*.xml
+*.xmi
+*.snap
+*.resources
+*.snap
+*.snap
+*.snap
+*.snap
+*.snap
+*.snap
+*.index
+*.log
+*.log

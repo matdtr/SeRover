@@ -1,27 +1,119 @@
-18:26:13 **** Incremental Build of configuration Debug for project basestruct ****
+09:24:15 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
+Building file: ../Src/autonomus_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/autonomus_handler.d" -MT"Src/autonomus_handler.o" -o "Src/autonomus_handler.o" "../Src/autonomus_handler.c"
+Finished building: ../Src/autonomus_handler.c
+ 
+Building file: ../Src/common.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/common.d" -MT"Src/common.o" -o "Src/common.o" "../Src/common.c"
+Finished building: ../Src/common.c
+ 
+Building file: ../Src/gpio.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/gpio.d" -MT"Src/gpio.o" -o "Src/gpio.o" "../Src/gpio.c"
+Finished building: ../Src/gpio.c
+ 
+Building file: ../Src/lane_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/lane_handler.d" -MT"Src/lane_handler.o" -o "Src/lane_handler.o" "../Src/lane_handler.c"
+Finished building: ../Src/lane_handler.c
+ 
 Building file: ../Src/main.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
 ../Src/main.c: In function 'main':
-../Src/main.c:166:4: warning: implicit declaration of function 'parse_command' [-Wimplicit-function-declaration]
-    parse_command(c, &forward, &reverse, &right, &left, &bright);
+../Src/main.c:170:4: warning: implicit declaration of function 'parse_command' [-Wimplicit-function-declaration]
+    parse_command(c, &forward, &reverse, &right, &left, &bright,&speed_command);
     ^~~~~~~~~~~~~
-../Src/main.c:235:34: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
-    sprintf(rangestring, "Range: %d\n", range_sonar1);
-                                  ^
-../Src/main.c:130:9: warning: unused variable 'data' [-Wunused-variable]
-   char* data = "START ";
-         ^~~~
+../Src/main.c:185:6: warning: implicit declaration of function 'reset_commands' [-Wimplicit-function-declaration]
+      reset_commands(&forward, &reverse, &right, &left, &speed_command);
+      ^~~~~~~~~~~~~~
 ../Src/main.c: At top level:
+../Src/main.c:277:6: warning: conflicting types for 'reset_commands'
+ void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command){
+      ^~~~~~~~~~~~~~
+../Src/main.c:185:6: note: previous implicit declaration of 'reset_commands' was here
+      reset_commands(&forward, &reverse, &right, &left, &speed_command);
+      ^~~~~~~~~~~~~~
 ../Src/main.c:284:6: warning: conflicting types for 'parse_command'
  void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
       ^~~~~~~~~~~~~
-../Src/main.c:166:4: note: previous implicit declaration of 'parse_command' was here
-    parse_command(c, &forward, &reverse, &right, &left, &bright);
+../Src/main.c:170:4: note: previous implicit declaration of 'parse_command' was here
+    parse_command(c, &forward, &reverse, &right, &left, &bright,&speed_command);
     ^~~~~~~~~~~~~
 Finished building: ../Src/main.c
+ 
+Building file: ../Src/motor_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
+../Src/motor_handler.c: In function 'motor_encoder':
+../Src/motor_handler.c:123:24: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+  sprintf(msg, "Speed: %d\r\n", speed);
+                        ^
+../Src/motor_handler.c:124:42: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+  HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
+                                          ^~~~~~
+../Src/motor_handler.c:124:42: warning: incompatible implicit declaration of built-in function 'strlen'
+../Src/motor_handler.c:124:42: note: include '<string.h>' or provide a declaration of 'strlen'
+../Src/motor_handler.c:129:11: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+  errore = abs(speed_d - speed);
+           ^~~
+Finished building: ../Src/motor_handler.c
+ 
+Building file: ../Src/sonar_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sonar_handler.d" -MT"Src/sonar_handler.o" -o "Src/sonar_handler.o" "../Src/sonar_handler.c"
+../Src/sonar_handler.c: In function 'change_sonar_gain':
+../Src/sonar_handler.c:47:45: warning: passing argument 5 of 'HAL_I2C_Mem_Write' makes pointer from integer without a cast [-Wint-conversion]
+  HAL_I2C_Mem_Write(hi2c, dev_address, 1, 1, gain, 1, HAL_MAX_DELAY);
+                                             ^~~~
+In file included from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:320:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/sonar_handler.h:11,
+                 from ../Src/sonar_handler.c:8:
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:501:19: note: expected 'uint8_t * {aka unsigned char *}' but argument is of type 'uint8_t {aka unsigned char}'
+ HAL_StatusTypeDef HAL_I2C_Mem_Write(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+                   ^~~~~~~~~~~~~~~~~
+Finished building: ../Src/sonar_handler.c
+ 
+Building file: ../Src/stm32f4xx_it.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/stm32f4xx_it.d" -MT"Src/stm32f4xx_it.o" -o "Src/stm32f4xx_it.o" "../Src/stm32f4xx_it.c"
+Finished building: ../Src/stm32f4xx_it.c
+ 
+Building file: ../Src/tim.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/tim.d" -MT"Src/tim.o" -o "Src/tim.o" "../Src/tim.c"
+Finished building: ../Src/tim.c
+ 
+Building file: ../Src/ws2812_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/ws2812_handler.d" -MT"Src/ws2812_handler.o" -o "Src/ws2812_handler.o" "../Src/ws2812_handler.c"
+../Src/ws2812_handler.c: In function 'ws2812_init_leds':
+../Src/ws2812_handler.c:21:2: warning: implicit declaration of function 'fillBufferBlack' [-Wimplicit-function-declaration]
+  fillBufferBlack();
+  ^~~~~~~~~~~~~~~
+../Src/ws2812_handler.c: At top level:
+../Src/ws2812_handler.c:33:6: warning: conflicting types for 'fillBufferBlack'
+ void fillBufferBlack() {
+      ^~~~~~~~~~~~~~~
+../Src/ws2812_handler.c:21:2: note: previous implicit declaration of 'fillBufferBlack' was here
+  fillBufferBlack();
+  ^~~~~~~~~~~~~~~
+Finished building: ../Src/ws2812_handler.c
  
 Building target: basestruct.elf
 Invoking: MCU GCC Linker
@@ -33,5 +125,5 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  22508	    488	   5832	  28828	   709c	basestruct.elf
+  22608	    488	   5888	  28984	   7138	basestruct.elf
  
