@@ -87,3 +87,5 @@ Sonar - Line/Debug/sources.mk
 *.index
 *.log
 *.log
+*.xml
+*.xml
