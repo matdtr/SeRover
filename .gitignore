@@ -89,3 +89,7 @@ Sonar - Line/Debug/sources.mk
 *.log
 *.xml
 *.xml
+*.xml
+*.xml
+testled/.settings/language.settings.xml
+testmotor/.settings/language.settings.xml
