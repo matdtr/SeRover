@@ -64,7 +64,7 @@ char readBuf[11];
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
 uint16_t motor_speed = 0;
-
+int testa = 0;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -113,7 +113,11 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
-  MX_TIM5_Init();
+  MX_TIM5_Init(); // non utilizzato al momento
+
+  MX_TIM11_Init();
+  MX_ADC1_Init();
+
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
@@ -124,10 +128,18 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
 
   MX_I2C1_Init();
-  MX_I2C2_Init();
+  //MX_I2C2_Init();
+
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(USART1_IRQn);
   HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+
+  HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
+  HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
+
+  HAL_TIM_Base_Init(&htim11);
+  HAL_TIM_Base_Start_IT(&htim11);
+
 
   char data3[100];
   char rangestring[10] ;
@@ -164,7 +176,8 @@ int main(void)
 
   // ---- Sonar Init -------
 
-  SonarInit(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
+  sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
+  sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
 
 	while (1) {
 
@@ -177,7 +190,6 @@ int main(void)
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
-
 
 			/* ----- Guida Autonoma START ----- */
 			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
@@ -294,14 +306,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  UartReady = SET;
 }
 
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	// testare prima il funzionamento della callback
-	// bisogna abilitare il timer quando è in mod autonoma via interrupt e abilitare anche le interr del timer 11
+	// deve leggere i vari sonar.
 
-	// HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
-    // HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
 }
+
+
 
 
 

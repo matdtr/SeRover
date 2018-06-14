@@ -32,6 +32,6 @@ uint16_t read_range_rear(I2C_HandleTypeDef *hi2c, uint16_t dev_address);
  */
 void send_command_sonar(I2C_HandleTypeDef *hi2c, uint16_t dev_ddress);
 
-void SonarInit(I2C_HandleTypeDef *hi2c, uint16_t dev_address, uint8_t gain);
+void sonar_Init(I2C_HandleTypeDef *hi2c, uint16_t dev_address, uint8_t gain);
 
 #endif /* SONAR_HANDLER_H_ */

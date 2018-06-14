@@ -48,3 +48,5 @@ void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int brigh
 	sprintf(data, "Line3: %u\n", line3);
 	HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
 }
+
+

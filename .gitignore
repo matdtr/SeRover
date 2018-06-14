@@ -99,3 +99,4 @@ basestruct/.settings/language.settings.xml
 *.xml
 basestruct/Inc/.DS_Store
 *.xml
+basestruct/.cproject

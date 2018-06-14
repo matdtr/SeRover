@@ -17,8 +17,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 	val[1] = ADC_BUF[1];
 	val[2] = ADC_BUF[2];
 
-	sprintf(msg, "%d\n\r", val[0]);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
+	/* sprintf(msg, "%d\n\r", val[0]);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF); */
 }
 
 /* ADC1 init function */

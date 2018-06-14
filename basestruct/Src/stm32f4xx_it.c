@@ -253,7 +253,7 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART2_IRQn 1 */
 }
 
-void TIM11_IRQHandler(void){
+void TIM1_TRG_COM_TIM11_IRQHandler(void){
 
 	  HAL_TIM_IRQHandler(&htim11);
 }
