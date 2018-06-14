@@ -41,7 +41,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
+ extern DMA_HandleTypeDef hdma_adc1;
+ extern ADC_HandleTypeDef hadc1;
 /* DMA memory to memory transfer handles -------------------------------------*/
  extern void _Error_Handler(char *, int);
 

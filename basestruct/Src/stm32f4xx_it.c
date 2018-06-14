@@ -42,7 +42,10 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
+extern UART_HandleTypeDef huart1;
 extern DMA_HandleTypeDef hdma_tim2_ch1;
+extern TIM_HandleTypeDef htim11;
+
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -236,6 +239,24 @@ void DMA2_Stream0_IRQHandler(void)
   /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
 
+/**
+* @brief This function handles USART2 global interrupt.
+*/
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
+  /* USER CODE END USART2_IRQn 1 */
+}
+
+void TIM11_IRQHandler(void){
+
+	  HAL_TIM_IRQHandler(&htim11);
+}
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

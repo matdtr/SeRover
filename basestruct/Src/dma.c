@@ -43,6 +43,8 @@
 /*----------------------------------------------------------------------------*/
 
 /* USER CODE BEGIN 1 */
+DMA_HandleTypeDef hdma_adc1;
+ADC_HandleTypeDef hadc1;
 
 /* USER CODE END 1 */
 
