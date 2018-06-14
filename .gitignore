@@ -93,3 +93,9 @@ Sonar - Line/Debug/sources.mk
 *.xml
 testled/.settings/language.settings.xml
 testmotor/.settings/language.settings.xml
+basestruct/.DS_Store
+.DS_Store
+basestruct/.settings/language.settings.xml
+*.xml
+basestruct/Inc/.DS_Store
+*.xml
