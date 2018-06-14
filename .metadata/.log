@@ -307,3 +307,15 @@ C Model Exception: C Model Status [Element main.c does not exist.]
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
 !SUBENTRY 1 org.eclipse.cdt.core 4 969 2018-06-13 10:32:41.218
 !MESSAGE Element main.c does not exist.
+
+!ENTRY org.eclipse.cdt.core 1 0 2018-06-14 10:04:08.471
+!MESSAGE Indexed 'test2sonar' (22 sources, 69 headers) in 2.47 sec: 5,180 declarations; 35,983 references; 0 unresolved inclusions; 62 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2018-06-14 11:31:47.335
+!MESSAGE Indexed 'test_line' (393 sources, 73 headers) in 5.6 sec: 10,684 declarations; 52,526 references; 0 unresolved inclusions; 114 syntax errors; 5,370 unresolved names (7.8%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2018-06-14 11:33:35.143
+!MESSAGE Indexed 'test_line' (318 sources, 77 headers) in 3.7 sec: 12,133 declarations; 60,724 references; 0 unresolved inclusions; 62 syntax errors; 2,992 unresolved names (3.9%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2018-06-14 11:45:42.182
+!MESSAGE Indexed 'test_line' (19 sources, 62 headers) in 1.01 sec: 3,503 declarations; 18,349 references; 0 unresolved inclusions; 28 syntax errors; 0 unresolved names (0%)

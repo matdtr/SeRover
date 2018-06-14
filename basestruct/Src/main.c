@@ -43,7 +43,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
+#include "adc.h"
 #include <string.h>
 #include <stdlib.h>
 /* USER CODE BEGIN Includes */
@@ -171,7 +171,7 @@ int main(void)
 		i = read_ble(c);
 
 		if (i == 1) {
-			// ------ Parse del comando ----
+			/*------ Parse del comando ---- */
 			parse_command(c, &forward, &reverse, &right, &left, &bright);
 
 
@@ -197,7 +197,6 @@ int main(void)
 				reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				bright = 1;
 			}
-
 
 			/* STOP */
 			else if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
@@ -228,7 +227,6 @@ int main(void)
 
 			// Conversione della velocità per l'encoder
 			speed_d = ((speed_command * 9) / 2);
-
 		}
 
 		/* Comando per cambiare la luminosità della matrice del led */
@@ -287,6 +285,7 @@ int main(void)
 		}
 		/* ----- FINE ENCODER ------  */
 	}
+
 }
 
 
