@@ -7,6 +7,8 @@
 
 #include "adc.h"
 
+uint32_t ADC_BUF[3];
+
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 	int val[3];
 	char msg[30];
