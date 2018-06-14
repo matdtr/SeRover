@@ -43,6 +43,8 @@ void send_command_sonar(I2C_HandleTypeDef *hi2c, uint16_t dev_address){
 
 }
 
-void change_sonar_gain(I2C_HandleTypeDef *hi2c, uint16_t dev_address, uint8_t gain){
-	HAL_I2C_Mem_Write(hi2c, dev_address, 1, 1, gain, 1, HAL_MAX_DELAY);
+void SonarInit(I2C_HandleTypeDef *hi2c, uint16_t dev_address, uint8_t gain){
+	uint8_t* gain_pointer;
+	*gain_pointer = gain;
+	HAL_I2C_Mem_Write(hi2c, dev_address, 1, 1, (uint8_t *)gain_pointer, 1, HAL_MAX_DELAY);
 }

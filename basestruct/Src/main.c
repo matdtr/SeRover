@@ -63,6 +63,7 @@
 char readBuf[11];
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
+uint16_t motor_speed = 0;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -135,8 +136,8 @@ int main(void)
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
   uint16_t speed_d = 0;
-  uint32_t range_sonar1;
-
+  uint16_t range_sonar1 = 0;
+  uint16_t range_sonar2 = 0;
   char c[11];
 
   /* USER CODE END 2 */
@@ -145,8 +146,13 @@ int main(void)
   int right = 0;
   int left = 0;
   int bright = 1;
+  int brightness = 0;
   int i = 0;
 
+  /* LINE DETECTION*/
+  uint8_t line1 = 0;
+  uint8_t line2 = 0;
+  uint8_t line3 = 0;
   // ---- Motor Init -------
   motor_Init(&huart6);
   stop_motors(&huart6);
@@ -166,14 +172,14 @@ int main(void)
 
 		if (i == 1) {
 			// ------ Parse del comando ----
-			parse_command(c, &forward, &reverse, &right, &left, &bright,&speed_command);
+			parse_command(c, &forward, &reverse, &right, &left, &bright);
 
 
 			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
 
-			// ----- Guida Autonoma START -----
+			/* ----- Guida Autonoma START ----- */
 			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
 				if (autonoma == 0){
 					autonoma = 1;
@@ -185,12 +191,20 @@ int main(void)
 				}
 			}
 
+			/* ----- Get Info to Web Application ----- */
+			else if ((forward == 0) && (reverse == 1) && (left == 1) && (right == 11) && (bright == 11)) {
+				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, line1, line2, line3);
+				reset_commands(&forward, &reverse, &right, &left, &speed_command);
+				bright = 1;
+			}
+
+
 			/* STOP */
-			if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
+			else if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
 				stop_motors(&huart6);
 			}
 			/* Comandi al rover per le diverse direzioni */
-			if (forward > 0) {
+			else if (forward > 0) {
 				//avanti
 				drive_forward(&huart6, forward);
 				speed_command = forward;
@@ -220,9 +234,11 @@ int main(void)
 		/* Comando per cambiare la luminosità della matrice del led */
 		if ((bright > 1)) {
 			ws2812_set_color_matrix(bright, bright, bright);
+			brightness = bright;
 		}
 		if ((bright == 0)) {
 			ws2812_set_color_matrix(0, 0, 0);
+			brightness = bright;
 			HAL_Delay(100);
 		}
 
@@ -242,7 +258,7 @@ int main(void)
 
 		/* ------ ENCODER --------- */
 		if (HAL_GetTick() - tick > 100L) {
-			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command);
+			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command, &motor_speed);
 			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
 			if (new_speed_command != speed_command) {

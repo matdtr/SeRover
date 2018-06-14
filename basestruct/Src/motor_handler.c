@@ -65,7 +65,7 @@ void motor_Init(UART_HandleTypeDef* huart)
 
 }
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_HandleTypeDef* huart, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command){
+uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_HandleTypeDef* huart, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command, uint16_t* motor_speed){
 	uint16_t cnt2 = 0;
 	uint16_t cnt3 = 0;
 	uint16_t diff = 0;
@@ -115,30 +115,32 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_Ha
 	}
 
 	if(speed1<speed2){
-		speed = speed1;
+		*motor_speed = speed1;
 	}else {
-		speed = speed2;
+		*motor_speed = speed2;
 	}
 
-	sprintf(msg, "Speed: %d\r\n", speed);
+	sprintf(msg, "Speed: %d\r\n", *motor_speed);
 	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
 	sprintf(msg, "Speed D: %d\r\n", speed_d);
 	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
-	errore = abs(speed_d - speed);
+	errore = abs(speed_d - *motor_speed);
 
 	sprintf(msg, "Errore: %d\r\n", errore);
 	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 	//TODO  regolazione della retroazione
-
-	if((speed_d < speed) && (speed_d <= 250)){
+	if (errore < 10 ){
+		return speed_command;
+	}
+	else if((speed_d < *motor_speed) && (speed_d <= 250)){
 		speed_command = speed_command - (ceil((errore*2)/9));
-	}else if(speed_d > speed && (speed_d > 250)){
+	}else if(speed_d > *motor_speed && (speed_d > 250)){
 		speed_command = speed_command + ceil((ceil(((errore*2)/9)) /10));
-	}else if((speed_d < speed) && (speed_d > 250)){
+	}else if((speed_d < *motor_speed) && (speed_d > 250)){
 		speed_command = speed_command - (ceil((errore*2)/9));
-	}else if(speed_d > speed && (speed_d < 250)){
+	}else if(speed_d > *motor_speed && (speed_d < 250)){
 		speed_command = speed_command + (ceil((errore*2)/9)) ;
 	}
 	if (speed_command > 101){
