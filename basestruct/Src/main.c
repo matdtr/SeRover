@@ -123,8 +123,6 @@ int main(void)
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
-  char msg[10] = "Start\n\r";
-  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
 
 
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
@@ -134,13 +132,9 @@ int main(void)
 
   MX_I2C1_Init();
 
-  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
 
   MX_ADC1_Init();
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_BUF, 3);
-
-  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
-
   HAL_ADC_Start_IT(&hadc1);
 
 
@@ -185,9 +179,9 @@ int main(void)
   sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
 
-  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
   while (1) {
 		i = read_ble(c);
+
 
 		if (i == 1) {
 			/*------ Parse del comando ---- */
@@ -200,8 +194,8 @@ int main(void)
 			case 100:
 				// automode start
 				autonoma = 1;
-				cmd.value = AUTOMODE_SPEED;
 				cmd.command = 8;
+				cmd.value = AUTOMODE_SPEED;
 				speed_d = ((AUTOMODE_SPEED * 9)/2);
 				send_command_motor(&huart6,cmd.command,cmd.value);
 				goto autonoma;
@@ -290,12 +284,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
 
-	front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
+	//front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
 	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
 
-	if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
+	/* if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
 		stop_motors(&huart6);
-	}
+	} */
+
+	sprintf(dataz, "SONAR %d --- %d ",front_sonar, rear_sonar);
+	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
+
 
 }
 
