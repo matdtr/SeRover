@@ -155,22 +155,11 @@ int main(void)
   uint16_t range_sonar1 = 0;
   uint16_t range_sonar2 = 0;
   char c[11];
-
-  /* USER CODE END 2 */
-  int forward = 0;
-  int reverse = 0;
-  int right = 0;
-  int left = 0;
-  int bright = 1;
   int brightness = 0;
   int i = 0;
 
   t_motorcommand cmd;
 
-  /* LINE DETECTION*/
-  uint8_t line1 = 0;
-  uint8_t line2 = 0;
-  uint8_t line3 = 0;
   // ---- Motor Init -------
   motor_Init(&huart6);
   stop_motors(&huart6);
