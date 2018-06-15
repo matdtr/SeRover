@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;basestruct/Inc/adc.h&apos; to &apos;line_handler.h&apos;" description="Rename resource &apos;adc.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Inc/adc.h" name="line_handler.h" stamp="1529057887872" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;basestruct/Src/adc.c&apos; to &apos;line_handler.c&apos;" description="Rename resource &apos;adc.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Src/adc.c" name="line_handler.c" stamp="1529057899593" updateReferences="true"/>
+</session>

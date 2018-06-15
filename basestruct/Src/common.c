@@ -8,12 +8,9 @@
 #include "common.h"
 
 
-void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command){
-	*forward = 0;
-	*right = 0;
-	*left = 0;
-	*reverse = 0;
-	*speed_command = 0;
+void reset_commands(t_motorcommand* motorcommand){
+	motorcommand->command = 0;
+	motorcommand->value = 0;
 }
 
 
@@ -41,4 +38,5 @@ void parse_command(char* c, t_motorcommand* motorcommand){
 	string = strtok(0, "#");
 	motorcommand->value = atoi(string);
 }
+
 

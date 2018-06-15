@@ -36,6 +36,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <line_handler.h>
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "dma.h"
@@ -43,7 +44,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "adc.h"
 #include <string.h>
 #include <stdlib.h>
 /* USER CODE BEGIN Includes */
@@ -52,7 +52,7 @@
 #include "ws2812_handler.h"
 #include "motor_handler.h"
 #include "autonomus_handler.h"
-
+#include "line_handler.h"
 /* USER CODE BEGIN Includes */
 
 
@@ -64,7 +64,6 @@ __IO ITStatus UartReady = SET;
 int autonoma = 0;
 uint16_t motor_speed = 0;
 char dataz[20];
-uint32_t ADC_BUF[3];
 uint16_t front_sonar = 0;
 uint16_t rear_sonar = 0;
 /* USER CODE BEGIN PV */
@@ -190,11 +189,16 @@ int main(void)
 			case 100:
 				// automode start
 				autonoma = 1;
+				cmd.value = AUTOMODE_SPEED;
+				cmd.command = 8;
+				speed_d = ((AUTOMODE_SPEED * 9)/2);
+				send_command_motor(&huart6,cmd.command,cmd.value);
 				goto autonoma;
 				break;
 			case 101:
 				//automode stop
 				autonoma = 0;
+				reset_commands(&cmd);
 				break;
 			case 102:
 				// get info
@@ -231,8 +235,6 @@ int main(void)
 		autonoma:
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
-			speed_d = ((AUTOMODE_SPEED * 9)/2);
-
 			/* range_sonar1 = read_range(&hi2c1,FRONT_SONAR_ADDR);
 			sprintf(rangestring, "Range: %lu \n", range_sonar1);
 			HAL_UART_Transmit(&huart2, (uint8_t*) rangestring, strlen(rangestring), 0xFFFF);
@@ -242,6 +244,7 @@ int main(void)
 				reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				stop_motors(&huart6);
 			}*/
+			read_line(&cmd);
 			// TODO fai qualcosa
 		}
 

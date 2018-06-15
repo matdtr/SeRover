@@ -41,7 +41,6 @@
 
 /* Private define ------------------------------------------------------------*/
 
-
 #define LED_DRIVER_Pin GPIO_PIN_15
 #define LED_DRIVER_GPIO_Port GPIOA
 
@@ -49,6 +48,7 @@
 #define CENTER_DET 1
 #define RIGHT_DET 2
 
+#define LINE_DET_LIM 1000
 
 #define H_BRIDGE_ADDR 128
 

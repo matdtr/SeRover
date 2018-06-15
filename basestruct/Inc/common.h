@@ -20,7 +20,7 @@ typedef struct motorcommand
 /*
  *  Reset di tutti i comandi
  */
-void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command);
+void reset_commands(t_motorcommand* motorcommand);
 
 /*
  *  Parse del comando ricevuto tramite bluetooth
