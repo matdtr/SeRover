@@ -216,10 +216,12 @@ int main(void)
 				break;
 			case 0:
 				stop_motors(&huart6);
+				speed_d = ((cmd.value * 9) / 2);
 				break;
 			default:
-				speed_d = ((cmd.value * 9) / 2);
 				send_command_motor(&huart6,cmd.command,cmd.value);
+				speed_d = ((cmd.value * 9) / 2);
+
 			}
 		}
 
@@ -255,27 +257,14 @@ int main(void)
 
 		/* ------ ENCODER --------- */
 		if (HAL_GetTick() - tick > 100L) {
-			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command, &motor_speed);
+			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
+			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
+			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
 
-			if (new_speed_command != speed_command) {
-				if (forward > 0) {
-					//avanti
-					drive_forward(&huart6, new_speed_command);
-				}
-				if (reverse > 0) {
-					// indietro
-					drive_backwards(&huart6, new_speed_command);
-				}
-				if (right > 0) {
-					//destra
-					turn_right(&huart6, new_speed_command);
-				}
-				if (left > 0) {
-					//sinistra
-					turn_left(&huart6, new_speed_command);
-				}
+			if (new_speed_command != cmd.value) {
+				send_command_motor(&huart6,cmd.command,new_speed_command);
 			}
-			speed_command = new_speed_command;
+			cmd.value = new_speed_command;
 			new_speed_command = 0;
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
 			cnt2 = __HAL_TIM_GET_COUNTER(&htim4);
