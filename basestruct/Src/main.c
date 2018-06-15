@@ -36,10 +36,12 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <line_handler.h>
+#include <adc.h>
+#include <adc.h>
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "dma.h"
+#include "adc.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -52,7 +54,6 @@
 #include "ws2812_handler.h"
 #include "motor_handler.h"
 #include "autonomus_handler.h"
-#include "line_handler.h"
 /* USER CODE BEGIN Includes */
 
 
@@ -62,6 +63,7 @@
 char readBuf[7]; // 11
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
+uint32_t ADC_BUF[3];
 uint32_t ADC_DATA[3];
 uint16_t motor_speed = 0;
 char dataz[20];
@@ -123,8 +125,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
   char msg[10] = "Start\n\r";
-
-  MX_ADC1_Init();
+  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
 
 
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
@@ -133,9 +134,17 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
 
   MX_I2C1_Init();
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_BUF, 3);
+
   HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
+
+  MX_ADC1_Init();
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_BUF, 3);
+
+  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
+
   HAL_ADC_Start_IT(&hadc1);
+
+
 
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -176,9 +185,9 @@ int main(void)
 
   sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
+
   HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
   while (1) {
-
 		i = read_ble(c);
 
 		if (i == 1) {
@@ -277,6 +286,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 }
 
 
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
 
@@ -289,8 +299,32 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 
 }
 
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+	char msg[30];
 
+	ADC_DATA[0] = ADC_BUF[0];
+	ADC_DATA[1] = ADC_BUF[1];
+	ADC_DATA[2] = ADC_BUF[2];
 
+}
+
+void read_line(t_motorcommand* cmd){
+	char msg[30] = "CIao";
+	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
+
+	if (ADC_DATA[LEFT_DET] > LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+		cmd->command = 8;
+	}else if (ADC_DATA[LEFT_DET] < LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+		cmd->command = 11;
+	}else if (ADC_DATA[LEFT_DET] > LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+		cmd->command = 10;
+	}
+	send_command_motor(&huart6,cmd->command,cmd->value);
+
+	sprintf(msg, "%d %d %d \n\r", ADC_DATA[LEFT_DET], ADC_DATA[CENTER_DET], ADC_DATA[RIGHT_DET]);
+	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
+
+}
 
 
 /**
