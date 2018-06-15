@@ -22,6 +22,7 @@ void send_command_motor(UART_HandleTypeDef* huart,char command,char speed){
 
 }
 
+/*
 void drive_forward(UART_HandleTypeDef* huart, char speed){
 	char command = 8;
 	send_command_motor(huart,command,speed);
@@ -40,13 +41,18 @@ void turn_right(UART_HandleTypeDef* huart, char speed){
 void turn_left(UART_HandleTypeDef* huart, char speed){
 	char command = 11;
 	send_command_motor(huart,command,speed);
-}
+} */
 
 void stop_motors(UART_HandleTypeDef* huart){
-	turn_left(huart, 0);
+	/* turn_left(huart, 0);
 	turn_right(huart,0);
 	drive_backwards(huart, 0);
-	drive_forward(huart, 0);
+	drive_forward(huart, 0); */
+	send_command_motor(huart,11,0);
+	send_command_motor(huart,10,0);
+	send_command_motor(huart,9,0);
+	send_command_motor(huart,8,0);
+
 	HAL_Delay(50);
 }
 
@@ -120,16 +126,10 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_Ha
 		*motor_speed = speed2;
 	}
 
-	sprintf(msg, "Speed: %d\r\n", *motor_speed);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
-	sprintf(msg, "Speed D: %d\r\n", speed_d);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
 	errore = abs(speed_d - *motor_speed);
 
-	sprintf(msg, "Errore: %d\r\n", errore);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 	//TODO  regolazione della retroazione
 	if (errore < 10 ){
 		return speed_command;

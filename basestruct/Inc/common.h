@@ -8,6 +8,15 @@
 #include <stdlib.h>
 #define N_LEDS (32)
 
+typedef struct motorcommand
+{
+  int command;
+  int value;
+
+} t_motorcommand;
+
+
+
 /*
  *  Reset di tutti i comandi
  */
@@ -16,7 +25,7 @@ void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t*
 /*
  *  Parse del comando ricevuto tramite bluetooth
  */
-void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright);
+void parse_command(char* c, t_motorcommand* motorcommand);
 
 /*
  *  Send sensors info to Web Application

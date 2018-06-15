@@ -7,6 +7,7 @@
 
 #include "common.h"
 
+
 void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t* speed_command){
 	*forward = 0;
 	*right = 0;
@@ -15,21 +16,6 @@ void reset_commands(int* forward, int* reverse, int* right, int* left, uint16_t*
 	*speed_command = 0;
 }
 
-
-void parse_command(char* c, int* forward, int* reverse, int* right, int* left, int* bright){
-	char* command = strtok(c, "#");
-	*forward = atoi(command);
-	command = strtok(0, "#");
-	*reverse = atoi(command);
-	command = strtok(0, "#");
-	*left = atoi(command);
-	command = strtok(0, "#");
-	*right = atoi(command);
-	command = strtok(0, "#");
-	if (command != NULL){
-		*bright = atoi(command);
-	}
-}
 
 void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int bright, uint16_t range_sonar1, uint16_t range_sonar2, uint8_t line1, uint8_t line2, uint8_t line3){
 	char data [30];
@@ -49,4 +35,10 @@ void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int brigh
 	HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
 }
 
+void parse_command(char* c, t_motorcommand* motorcommand){
+	char* string = strtok(c, "#");
+	motorcommand->command = atoi(string);
+	string = strtok(0, "#");
+	motorcommand->value = atoi(string);
+}
 

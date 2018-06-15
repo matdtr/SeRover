@@ -8,7 +8,7 @@
 #include "sonar_handler.h"
 #include "common.h"
 
-uint16_t read_range_front(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
+uint16_t read_range(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
 	  uint8_t range;
 	  uint8_t range_hb;
 
@@ -22,17 +22,6 @@ uint16_t read_range_front(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
 	  return ((uint16_t)range_hb << 8) | range;
 }
 
-uint16_t read_range_rear(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
-	  uint8_t range;
-	  uint8_t range_hb;
-
-	  HAL_I2C_Mem_Read(hi2c, dev_address, 2, 1, &range, 1, HAL_MAX_DELAY);
-	  range_hb = range;
-
-	  HAL_I2C_Mem_Read(hi2c, dev_address, 3, 1, &range, 1, HAL_MAX_DELAY);
-
-	  return ((uint16_t)range_hb << 8) | range;
-}
 
 void send_command_sonar(I2C_HandleTypeDef *hi2c, uint16_t dev_address){
 	uint8_t command[2];

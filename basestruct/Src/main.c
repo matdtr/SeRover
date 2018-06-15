@@ -60,11 +60,13 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-char readBuf[11];
+char readBuf[7]; // 11
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
 uint16_t motor_speed = 0;
-int testa = 0;
+char dataz[20];
+uint32_t ADC_BUF[3];
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -84,8 +86,9 @@ int read_ble(char* c){
 	//strcpy(c,"b");
 	 if(UartReady == SET) {
 	    UartReady = RESET;
-	    HAL_UART_Receive_IT(&huart1, (uint8_t*)readBuf, 11);
+	    HAL_UART_Receive_IT(&huart1, (uint8_t*)readBuf, 7);
 	    strcpy(c,readBuf);
+	    HAL_UART_Transmit(&huart2, (uint8_t*)c, strlen(c),0xFFFFFF);
 	    return 1;
 	 } else {
 		 return 0;
@@ -114,13 +117,14 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init(); // non utilizzato al momento
-
   MX_TIM11_Init();
-  MX_ADC1_Init();
 
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+
+  MX_ADC1_Init();
+
 
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_2);
@@ -128,7 +132,8 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);
 
   MX_I2C1_Init();
-  //MX_I2C2_Init();
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_BUF, 3);
+  HAL_ADC_Start_IT(&hadc1);
 
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -138,7 +143,7 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  HAL_TIM_Base_Start_IT(&htim11);
+  //HAL_TIM_Base_Start_IT(&htim11);
 
 
   char data3[100];
@@ -161,6 +166,8 @@ int main(void)
   int brightness = 0;
   int i = 0;
 
+  t_motorcommand cmd;
+
   /* LINE DETECTION*/
   uint8_t line1 = 0;
   uint8_t line2 = 0;
@@ -179,98 +186,78 @@ int main(void)
   sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
 
-	while (1) {
+  while (1) {
 
 		i = read_ble(c);
 
 		if (i == 1) {
 			/*------ Parse del comando ---- */
-			parse_command(c, &forward, &reverse, &right, &left, &bright);
+			parse_command(c,&cmd);
 
-
-			sprintf(data3, "F: %d , RV: %d , RX: %d , SX: %d , BR: %d", forward, reverse, right, left, bright);
+			sprintf(data3, "TEST STRUCT %d --- %d ",cmd.command, cmd.value);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-			/* ----- Guida Autonoma START ----- */
-			if ((forward == 11) && (reverse == 11) && (left == 1) && (right == 1)) {
-				if (autonoma == 0){
-					autonoma = 1;
-					goto autonoma;
-				}else{
-					/* Altrimenti fermati e disattiva  la guida autonoma */
-					autonoma = 0;
-					reset_commands(&forward, &reverse, &right, &left, &speed_command);
-				}
-			}
-
-			/* ----- Get Info to Web Application ----- */
-			else if ((forward == 0) && (reverse == 1) && (left == 1) && (right == 11) && (bright == 11)) {
-				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, line1, line2, line3);
-				reset_commands(&forward, &reverse, &right, &left, &speed_command);
-				bright = 1;
-			}
-
-			/* STOP */
-			else if ((forward == 0) && (reverse == 0) && (right == 0) && (left == 0)) {
+			switch (cmd.command){
+			case 100:
+				// automode start
+				autonoma = 1;
+				goto autonoma;
+				break;
+			case 101:
+				//automode stop
+				autonoma = 0;
+				break;
+			case 102:
+				// get info
+				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[0], ADC_BUF[1], ADC_BUF[2]);
+				break;
+			case 99:
+				// setup led
+				goto led_setup;
+				break;
+			case 0:
 				stop_motors(&huart6);
+				break;
+			default:
+				speed_d = ((cmd.value * 9) / 2);
+				send_command_motor(&huart6,cmd.command,cmd.value);
 			}
-			/* Comandi al rover per le diverse direzioni */
-			else if (forward > 0) {
-				//avanti
-				drive_forward(&huart6, forward);
-				speed_command = forward;
-			} else if (reverse > 0) {
-				// indietro
-				drive_backwards(&huart6, reverse);
-				speed_command = reverse;
-
-			} else if (right > 0) {
-				//destra
-				turn_right(&huart6, right);
-				speed_command = right;
-
-			} else if (left > 0) {
-				//sinistra
-				turn_left(&huart6, left);
-				speed_command = left;
-			} else {
-				speed_command = 0;
-			}
-
-			// Conversione della velocità per l'encoder
-			speed_d = ((speed_command * 9) / 2);
 		}
 
 		/* Comando per cambiare la luminosità della matrice del led */
-		if ((bright > 1)) {
-			ws2812_set_color_matrix(bright, bright, bright);
-			brightness = bright;
+
+		led_setup:
+		if((cmd.command == 99) && (cmd.value >1)){
+			ws2812_set_color_matrix(cmd.value, cmd.value, cmd.value);
+			brightness = cmd.value;
 		}
-		if ((bright == 0)) {
+		if ((cmd.command == 99) && (cmd.value == 0 )) {
 			ws2812_set_color_matrix(0, 0, 0);
-			brightness = bright;
+			brightness = cmd.value;
 			HAL_Delay(100);
 		}
 
 		autonoma:
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
-			range_sonar1 = read_range_front(&hi2c1,FRONT_SONAR_ADDR);
+			speed_d = ((AUTOMODE_SPEED * 9)/2);
+
+			/* range_sonar1 = read_range(&hi2c1,FRONT_SONAR_ADDR);
 			sprintf(rangestring, "Range: %lu \n", range_sonar1);
 			HAL_UART_Transmit(&huart2, (uint8_t*) rangestring, strlen(rangestring), 0xFFFF);
 
-			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando*/
+			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando
 			if (range_sonar1 < 20){
 				reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				stop_motors(&huart6);
-			}
+			}*/
+			// TODO fai qualcosa
 		}
 
 		/* ------ ENCODER --------- */
 		if (HAL_GetTick() - tick > 100L) {
 			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, speed_command, &motor_speed);
-			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
-			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
+
 			if (new_speed_command != speed_command) {
 				if (forward > 0) {
 					//avanti
@@ -309,7 +296,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	// deve leggere i vari sonar.
+	uint16_t front_sonar = 0;
+	uint16_t rear_sonar = 0;
+
+	sprintf(dataz, "TEST sonar %d --- ",front_sonar);
+	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
+
+	front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
+	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+
+	if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
+		stop_motors(&huart6);
+	}
+	// devo fare un else?
 
 }
 

@@ -19,13 +19,13 @@
  */
 void send_command_motor(UART_HandleTypeDef* huart,char command,char speed);
 
-void drive_forward(UART_HandleTypeDef* huart, char speed);
+//void drive_forward(UART_HandleTypeDef* huart, char speed);
 
-void drive_backwards(UART_HandleTypeDef* huart, char speed);
+//void drive_backwards(UART_HandleTypeDef* huart, char speed);
 
-void turn_right(UART_HandleTypeDef* huart, char speed);
+//void turn_right(UART_HandleTypeDef* huart, char speed);
 
-void turn_left(UART_HandleTypeDef* huart, char speed);
+//void turn_left(UART_HandleTypeDef* huart, char speed);
 
 void stop_motors(UART_HandleTypeDef* huart);
 
