@@ -44,8 +44,8 @@
 #define LED_DRIVER_Pin GPIO_PIN_15
 #define LED_DRIVER_GPIO_Port GPIOA
 
-#define LEFT_DET 0
-#define CENTER_DET 1
+#define CENTER_DET 0
+#define LEFT_DET 1
 #define RIGHT_DET 2
 
 #define LINE_DET_LIM 1000
@@ -56,7 +56,7 @@
 #define REAR_SONAR_ADDR  0xE2
 
 #define MIN_DISTANCE 25
-#define AUTOMODE_SPEED 10
+#define AUTOMODE_SPEED 20
 
 /* USER CODE BEGIN Private defines */
 

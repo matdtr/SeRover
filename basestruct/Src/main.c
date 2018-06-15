@@ -89,7 +89,6 @@ int read_ble(char* c){
 	    UartReady = RESET;
 	    HAL_UART_Receive_IT(&huart1, (uint8_t*)readBuf, 7);
 	    strcpy(c,readBuf);
-	    HAL_UART_Transmit(&huart2, (uint8_t*)c, strlen(c),0xFFFFFF);
 	    return 1;
 	 } else {
 		 return 0;
@@ -151,6 +150,8 @@ int main(void)
 
 
   char data3[100];
+  char msg[50];
+
   char rangestring[10] ;
   uint16_t speed_command = 0;
   uint16_t new_speed_command = 0;
@@ -162,7 +163,7 @@ int main(void)
   char c[11];
   int brightness = 0;
   int i = 0;
-
+  int doone =0;
   t_motorcommand cmd;
 
   // ---- Motor Init -------
@@ -180,6 +181,7 @@ int main(void)
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
 
   while (1) {
+
 		i = read_ble(c);
 
 
@@ -187,24 +189,23 @@ int main(void)
 			/*------ Parse del comando ---- */
 			parse_command(c,&cmd);
 
-			sprintf(data3, "TEST STRUCT %d --- %d ",cmd.command, cmd.value);
+			sprintf(data3, "TEST STRUCT %d --- %d \n\r",cmd.command, cmd.value);
 			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
 			switch (cmd.command){
 			case 100:
 				// automode start
 				autonoma = 1;
-				cmd.command = 8;
-				cmd.value = AUTOMODE_SPEED;
 				speed_d = ((AUTOMODE_SPEED * 9)/2);
-				send_command_motor(&huart6,cmd.command,cmd.value);
 				goto autonoma;
 				break;
 			case 101:
 				//automode stop
 				autonoma = 0;
+				doone--;
 				reset_commands(&cmd);
 				speed_d = 0;
+				stop_motors(&huart6);
 				break;
 			case 102:
 				// get info
@@ -250,13 +251,20 @@ int main(void)
 				reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				stop_motors(&huart6);
 			}*/
+			if(doone == 0){
+				cmd.command = 8;
+				cmd.value = AUTOMODE_SPEED;
+				send_command_motor(&huart6,cmd.command,cmd.value);
+				doone++;
+			}
 
-			read_line(&cmd);
+				read_line(&cmd);
+
 			// TODO fai qualcosa
 		}
 
 		/* ------ ENCODER --------- */
-		if (HAL_GetTick() - tick > 100L) {
+		 if (HAL_GetTick() - tick > 100L) {
 			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
 
 			if (new_speed_command != cmd.value) {
@@ -299,20 +307,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 
 
 void read_line(t_motorcommand* cmd){
-	char msg[30];
-	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
+	int tmp = cmd->command;
 
-	if (ADC_BUF[LEFT_DET] > LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
+	if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
 		cmd->command = 8;
-	}else if (ADC_BUF[LEFT_DET] < LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
-		cmd->command = 11;
-	}else if (ADC_BUF[LEFT_DET] > LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
-		cmd->command = 10;
+	}else if ((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
+		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
+	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
+		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}
-	send_command_motor(&huart6,cmd->command,cmd->value);
-
-	sprintf(msg, "%d %d %d \n\r", ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
-	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
+	cmd->value = AUTOMODE_SPEED;
+	if(tmp != cmd->command){
+		send_command_motor(&huart6,cmd->command,cmd->value);
+	}
+	sprintf(dataz, "LANE CHANGE %d --- %d \n\r",cmd->command, cmd->value);
+	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
 
 }
 
