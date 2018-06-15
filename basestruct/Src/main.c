@@ -64,7 +64,6 @@ char readBuf[7]; // 11
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
 uint32_t ADC_BUF[3];
-uint32_t ADC_DATA[3];
 uint16_t motor_speed = 0;
 char dataz[20];
 uint16_t front_sonar = 0;
@@ -211,10 +210,11 @@ int main(void)
 				//automode stop
 				autonoma = 0;
 				reset_commands(&cmd);
+				speed_d = 0;
 				break;
 			case 102:
 				// get info
-				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_DATA[LEFT_DET], ADC_DATA[CENTER_DET], ADC_DATA[RIGHT_DET]);
+				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
 				break;
 			case 99:
 				// setup led
@@ -299,29 +299,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-	char msg[30];
-
-	ADC_DATA[0] = ADC_BUF[0];
-	ADC_DATA[1] = ADC_BUF[1];
-	ADC_DATA[2] = ADC_BUF[2];
-
-}
 
 void read_line(t_motorcommand* cmd){
-	char msg[30] = "CIao";
+	char msg[30];
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
 
-	if (ADC_DATA[LEFT_DET] > LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+	if (ADC_BUF[LEFT_DET] > LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
 		cmd->command = 8;
-	}else if (ADC_DATA[LEFT_DET] < LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+	}else if (ADC_BUF[LEFT_DET] < LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
 		cmd->command = 11;
-	}else if (ADC_DATA[LEFT_DET] > LINE_DET_LIM && ADC_DATA[CENTER_DET] < LINE_DET_LIM && ADC_DATA[RIGHT_DET] > LINE_DET_LIM){
+	}else if (ADC_BUF[LEFT_DET] > LINE_DET_LIM && ADC_BUF[CENTER_DET] < LINE_DET_LIM && ADC_BUF[RIGHT_DET] > LINE_DET_LIM){
 		cmd->command = 10;
 	}
 	send_command_motor(&huart6,cmd->command,cmd->value);
 
-	sprintf(msg, "%d %d %d \n\r", ADC_DATA[LEFT_DET], ADC_DATA[CENTER_DET], ADC_DATA[RIGHT_DET]);
+	sprintf(msg, "%d %d %d \n\r", ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 0xFFFF);
 
 }
