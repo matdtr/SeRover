@@ -65,7 +65,8 @@ int autonoma = 0;
 uint16_t motor_speed = 0;
 char dataz[20];
 uint32_t ADC_BUF[3];
-
+uint16_t front_sonar = 0;
+uint16_t rear_sonar = 0;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -273,8 +274,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	uint16_t front_sonar = 0;
-	uint16_t rear_sonar = 0;
 
 	front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
 	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
