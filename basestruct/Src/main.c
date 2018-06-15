@@ -276,17 +276,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	uint16_t front_sonar = 0;
 	uint16_t rear_sonar = 0;
 
-	sprintf(dataz, "TEST sonar %d --- ",front_sonar);
-	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
-
 	front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-	front_sonar++;
-	/* rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
 
 	if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
 		stop_motors(&huart6);
-	} */
-	// devo fare un else?
+	}
 
 }
 
