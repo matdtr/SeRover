@@ -125,16 +125,8 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, UART_Ha
 		*motor_speed = speed2;
 	}
 
-	sprintf(msg, "Speed: %d\r\n", *motor_speed);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
-
-	sprintf(msg, "Speed D: %d\r\n", speed_d);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
-
 	errore = abs(speed_d - *motor_speed);
 
-	sprintf(msg, "Errore: %d\r\n", errore);
-	HAL_UART_Transmit(huart, (uint8_t*)msg, strlen(msg),0xFFFF);
 
 	//TODO  regolazione della retroazione
 	if (errore < 10 ){

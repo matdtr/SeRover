@@ -62,6 +62,7 @@
 char readBuf[7]; // 11
 __IO ITStatus UartReady = SET;
 int autonoma = 0;
+uint32_t ADC_DATA[3];
 uint16_t motor_speed = 0;
 char dataz[20];
 uint16_t front_sonar = 0;
@@ -121,6 +122,7 @@ int main(void)
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+  char msg[10] = "Start\n\r";
 
   MX_ADC1_Init();
 
@@ -132,6 +134,7 @@ int main(void)
 
   MX_I2C1_Init();
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_BUF, 3);
+  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
   HAL_ADC_Start_IT(&hadc1);
 
   /* USER CODE BEGIN 2 */
@@ -142,7 +145,7 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  HAL_TIM_Base_Start_IT(&htim11);
+  //HAL_TIM_Base_Start_IT(&htim11);
 
 
   char data3[100];
@@ -173,7 +176,7 @@ int main(void)
 
   sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
-
+  HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF);
   while (1) {
 
 		i = read_ble(c);
@@ -202,7 +205,7 @@ int main(void)
 				break;
 			case 102:
 				// get info
-				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
+				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_DATA[LEFT_DET], ADC_DATA[CENTER_DET], ADC_DATA[RIGHT_DET]);
 				break;
 			case 99:
 				// setup led
@@ -244,6 +247,7 @@ int main(void)
 				reset_commands(&forward, &reverse, &right, &left, &speed_command);
 				stop_motors(&huart6);
 			}*/
+
 			read_line(&cmd);
 			// TODO fai qualcosa
 		}
@@ -251,8 +255,6 @@ int main(void)
 		/* ------ ENCODER --------- */
 		if (HAL_GetTick() - tick > 100L) {
 			new_speed_command = motor_encoder(&htim3,&htim4, &huart2, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
-			sprintf(data3, "Speed CMD NEW: %d \r\n", new_speed_command);
-			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3), 0xFFFF);
 
 			if (new_speed_command != cmd.value) {
 				send_command_motor(&huart6,cmd.command,new_speed_command);
