@@ -44,10 +44,11 @@
 
 #define LED_DRIVER_Pin GPIO_PIN_15
 #define LED_DRIVER_GPIO_Port GPIOA
-#define LANE_LEFT GPIO_PIN_1
-#define LANE_CENTER GPIO_PIN_2
-#define LANE_RIGHT GPIO_PIN_3
-#define LANE_GPIO_Port GPIOC
+
+#define LEFT_DET 0
+#define CENTER_DET 1
+#define RIGHT_DET 2
+
 
 #define H_BRIDGE_ADDR 128
 

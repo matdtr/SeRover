@@ -6,7 +6,6 @@
  */
 
 #include "autonomus_handler.h"
-#include "lane_handler.h"
 #include "sonar_handler.h"
 #include "motor_handler.h"
 #define MIN_SONAR 20

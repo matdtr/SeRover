@@ -9,17 +9,6 @@
 
 uint32_t ADC_BUF[3];
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-	int val[3];
-	char msg[30];
-
-	val[0] = ADC_BUF[0];
-	val[1] = ADC_BUF[1];
-	val[2] = ADC_BUF[2];
-
-	/* sprintf(msg, "%d\n\r", val[0]);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg,strlen(msg), 0xFFFFFF); */
-}
 
 /* ADC1 init function */
 void MX_ADC1_Init(void)

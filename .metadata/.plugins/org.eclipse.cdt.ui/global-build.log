@@ -1,32 +1,3 @@
-13:37:13 **** Incremental Build of configuration Debug for project basestruct ****
+11:15:07 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
-Building file: ../Src/adc.c
-Invoking: MCU GCC Compiler
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
-arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/adc.d" -MT"Src/adc.o" -o "Src/adc.o" "../Src/adc.c"
-Finished building: ../Src/adc.c
- 
-Building target: basestruct.elf
-Invoking: MCU GCC Linker
-arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F401RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "basestruct.elf" @"objects.list"   -lm
-Src/tim.o: In function `HAL_TIM_Encoder_MspInit':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/tim.c:259: multiple definition of `HAL_TIM_Encoder_MspInit'
-Src/stm32f4xx_hal_msp.o:/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_hal_msp.c:266: first defined here
-Src/tim.o: In function `MX_TIM1_Init':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/tim.c:54: multiple definition of `HAL_TIM_Encoder_MspDeInit'
-Src/stm32f4xx_hal_msp.o:/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_hal_msp.c:54: first defined here
-Src/tim.o: In function `MX_TIM1_Init':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/tim.c:54: multiple definition of `HAL_TIM_Base_MspInit'
-Src/stm32f4xx_hal_msp.o:/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_hal_msp.c:54: first defined here
-Src/tim.o: In function `MX_TIM1_Init':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/tim.c:54: multiple definition of `HAL_TIM_MspPostInit'
-Src/stm32f4xx_hal_msp.o:/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_hal_msp.c:54: first defined here
-Src/tim.o: In function `MX_TIM1_Init':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/tim.c:54: multiple definition of `HAL_TIM_Base_MspDeInit'
-Src/stm32f4xx_hal_msp.o:/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_hal_msp.c:54: first defined here
-Src/stm32f4xx_it.o: In function `ADC_IRQHandler':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_it.c:219: undefined reference to `hadc1'
-Src/stm32f4xx_it.o: In function `DMA2_Stream0_IRQHandler':
-/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug/../Src/stm32f4xx_it.c:233: undefined reference to `hdma_adc1'
-collect2: error: ld returned 1 exit status
-make: *** [basestruct.elf] Error 1
+make: Nothing to be done for `all'.

@@ -49,7 +49,6 @@
 /* USER CODE BEGIN Includes */
 #include "common.h"
 #include "sonar_handler.h"
-#include "lane_handler.h"
 #include "ws2812_handler.h"
 #include "motor_handler.h"
 #include "autonomus_handler.h"
@@ -209,7 +208,7 @@ int main(void)
 				break;
 			case 102:
 				// get info
-				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[0], ADC_BUF[1], ADC_BUF[2]);
+				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
 				break;
 			case 99:
 				// setup led
