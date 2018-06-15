@@ -142,7 +142,7 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  //HAL_TIM_Base_Start_IT(&htim11);
+  HAL_TIM_Base_Start_IT(&htim11);
 
 
   char data3[100];
@@ -280,11 +280,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
 
 	front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+	front_sonar++;
+	/* rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
 
 	if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
 		stop_motors(&huart6);
-	}
+	} */
 	// devo fare un else?
 
 }
