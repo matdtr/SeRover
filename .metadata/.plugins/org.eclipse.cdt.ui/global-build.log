@@ -1,4 +1,4 @@
-19:12:45 **** Incremental Build of configuration Debug for project basestruct ****
+19:34:39 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
 Building file: ../Src/main.c
 Invoking: MCU GCC Compiler
@@ -18,23 +18,23 @@ arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D
    char msg[50];
         ^~~
 ../Src/main.c: At top level:
-../Src/main.c:327:6: warning: conflicting types for 'read_line'
+../Src/main.c:326:6: warning: conflicting types for 'read_line'
  void read_line(t_motorcommand* cmd){
       ^~~~~~~~~
 ../Src/main.c:254:4: note: previous implicit declaration of 'read_line' was here
     read_line(&cmd);
     ^~~~~~~~~
 ../Src/main.c: In function 'read_line':
-../Src/main.c:336:12: warning: implicit declaration of function 'ceil' [-Wimplicit-function-declaration]
+../Src/main.c:335:12: warning: implicit declaration of function 'ceil' [-Wimplicit-function-declaration]
    speed1 = ceil(kd*AUTOMODE_SPEED);
             ^~~~
-../Src/main.c:336:12: warning: incompatible implicit declaration of built-in function 'ceil'
-../Src/main.c:336:12: note: include '<math.h>' or provide a declaration of 'ceil'
-../Src/main.c:340:12: warning: incompatible implicit declaration of built-in function 'ceil'
+../Src/main.c:335:12: warning: incompatible implicit declaration of built-in function 'ceil'
+../Src/main.c:335:12: note: include '<math.h>' or provide a declaration of 'ceil'
+../Src/main.c:339:12: warning: incompatible implicit declaration of built-in function 'ceil'
    speed2 = ceil(kd*AUTOMODE_SPEED);
             ^~~~
-../Src/main.c:340:12: note: include '<math.h>' or provide a declaration of 'ceil'
-../Src/main.c:328:6: warning: unused variable 'tmp' [-Wunused-variable]
+../Src/main.c:339:12: note: include '<math.h>' or provide a declaration of 'ceil'
+../Src/main.c:327:6: warning: unused variable 'tmp' [-Wunused-variable]
   int tmp = cmd->command;
       ^~~
 Finished building: ../Src/main.c
@@ -49,5 +49,5 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  32928	    492	   6100	  39520	   9a60	basestruct.elf
+  32768	    496	   6096	  39360	   99c0	basestruct.elf
  

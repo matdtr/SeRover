@@ -174,7 +174,7 @@ uint16_t motor_encoder_auto(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, 
 	float pid_d = 0;
 	float pid_i = 0;
 	int speed_d = (speed_des*9)/2;
-	int final = 0;
+	uint16_t final = 0;
 	char msg[80];
 
 	cnt2 = __HAL_TIM_GET_COUNTER(htim);
@@ -209,12 +209,11 @@ uint16_t motor_encoder_auto(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, 
 	*pid_i_pre = pid_i;
 	*error_pre = errore;
 
-
 	final = speed_command + ceil(((pid_p + pid_d + pid_i)*2)/9);
 	if (final > 127){
 		final = 127;
 	}
-	/*
+/*
 	if (final < 0){
 		switch (cmd->command){
 		case 8:
@@ -233,12 +232,10 @@ uint16_t motor_encoder_auto(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, 
 		final =  abs(final);
 	}
 
-	sprintf(msg, "%d %d\n\r", (speed_command), ceil(((pid_p + pid_d + pid_i)*2)/9));
+	sprintf(msg, "%d %d\n\r", (speed_command), cmd->command);
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 	sprintf(msg, "%d %d\n\r", (final), cmd->command);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-
-	*/
+	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);*/
 	return final;
 
 
