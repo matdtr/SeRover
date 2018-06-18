@@ -163,7 +163,6 @@ int main(void)
   char c[11];
   int brightness = 0;
   int i = 0;
-  int doone =0;
   t_motorcommand cmd;
 
   // ---- Motor Init -------
@@ -196,13 +195,15 @@ int main(void)
 			case 100:
 				// automode start
 				autonoma = 1;
+				cmd.command = 8;
+				cmd.value = AUTOMODE_SPEED;
+				send_command_motor(&huart6,cmd.command,cmd.value);
 				speed_d = ((AUTOMODE_SPEED * 9)/2);
 				goto autonoma;
 				break;
 			case 101:
 				//automode stop
 				autonoma = 0;
-				doone--;
 				reset_commands(&cmd);
 				speed_d = 0;
 				stop_motors(&huart6);
@@ -242,23 +243,8 @@ int main(void)
 		autonoma:
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
-			/* range_sonar1 = read_range(&hi2c1,FRONT_SONAR_ADDR);
-			sprintf(rangestring, "Range: %lu \n", range_sonar1);
-			HAL_UART_Transmit(&huart2, (uint8_t*) rangestring, strlen(rangestring), 0xFFFF);
 
-			/* Se la distanza è minore di 20, fermati e aspetta un nuovo comando
-			if (range_sonar1 < 20){
-				reset_commands(&forward, &reverse, &right, &left, &speed_command);
-				stop_motors(&huart6);
-			}*/
-			if(doone == 0){
-				cmd.command = 8;
-				cmd.value = AUTOMODE_SPEED;
-				send_command_motor(&huart6,cmd.command,cmd.value);
-				doone++;
-			}
-
-				read_line(&cmd);
+			read_line(&cmd);
 
 			// TODO fai qualcosa
 		}
@@ -311,13 +297,18 @@ void read_line(t_motorcommand* cmd){
 
 	if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
 		cmd->command = 8;
+		send_command_motor(&huart6, 11, 0);
+		send_command_motor(&huart6, 10, 0);
+
 	}else if ((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}
 	cmd->value = AUTOMODE_SPEED;
+
 	if(tmp != cmd->command){
+		//stop_motors(&huart6);
 		send_command_motor(&huart6,cmd->command,cmd->value);
 	}
 	sprintf(dataz, "LANE CHANGE %d --- %d \n\r",cmd->command, cmd->value);

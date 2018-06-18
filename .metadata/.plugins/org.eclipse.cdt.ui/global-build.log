@@ -1,19 +1,29 @@
-12:59:53 **** Incremental Build of configuration Debug for project basestruct ****
+14:31:46 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
 Building file: ../Src/main.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
 ../Src/main.c: In function 'main':
-../Src/main.c:245:4: warning: "/*" within comment [-Wcomment]
-    /* Se la distanza è minore di 20, fermati e aspetta un nuovo comando
-     
-../Src/main.c:153:12: warning: unused variable 'speed_command' [-Wunused-variable]
+../Src/main.c:247:4: warning: implicit declaration of function 'read_line' [-Wimplicit-function-declaration]
+    read_line(&cmd);
+    ^~~~~~~~~
+../Src/main.c:156:12: warning: unused variable 'speed_command' [-Wunused-variable]
    uint16_t speed_command = 0;
             ^~~~~~~~~~~~~
-../Src/main.c:152:8: warning: unused variable 'rangestring' [-Wunused-variable]
+../Src/main.c:155:8: warning: unused variable 'rangestring' [-Wunused-variable]
    char rangestring[10] ;
         ^~~~~~~~~~~
+../Src/main.c:153:8: warning: unused variable 'msg' [-Wunused-variable]
+   char msg[50];
+        ^~~
+../Src/main.c: At top level:
+../Src/main.c:295:6: warning: conflicting types for 'read_line'
+ void read_line(t_motorcommand* cmd){
+      ^~~~~~~~~
+../Src/main.c:247:4: note: previous implicit declaration of 'read_line' was here
+    read_line(&cmd);
+    ^~~~~~~~~
 Finished building: ../Src/main.c
  
 Building target: basestruct.elf
@@ -26,5 +36,5 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  25636	    488	   6112	  32236	   7dec	basestruct.elf
+  25676	    488	   6096	  32260	   7e04	basestruct.elf
  
