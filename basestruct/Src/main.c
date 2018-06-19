@@ -70,7 +70,12 @@ uint16_t rear_sonar = 0;
 
 uint16_t speed1 = AUTOMODE_SPEED;
 uint16_t speed2 = AUTOMODE_SPEED;
-float kd = 0.22;
+float error_pre_speed_1 = 0;
+float error_pre_speed_2 = 0;
+float pid_i_pre1 = 0;
+float pid_i_pre2 = 0;
+float kd = 0.7;
+float ks = 0.7;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -160,7 +165,6 @@ int main(void)
   uint16_t new_speed_command = 0;
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
-  uint16_t speed_d = 0;
   uint16_t range_sonar1 = 0;
   uint16_t range_sonar2 = 0;
   char c[11];
@@ -169,10 +173,6 @@ int main(void)
   t_motorcommand cmd;
   uint16_t new_speed1 = 0;
   uint16_t new_speed2 = 0;
-  float error_pre_speed_1 = 0;
-  float error_pre_speed_2 = 0;
-  float pid_i_pre1 = 0;
-  float pid_i_pre2 = 0;
 
   // ---- Motor Init -------
   motor_Init(&huart6);
@@ -206,15 +206,17 @@ int main(void)
 				autonoma = 1;
 				cmd.command = 8;
 				cmd.value = AUTOMODE_SPEED;
-				send_command_motor(&huart6,cmd.command,cmd.value);
-				speed_d = ((AUTOMODE_SPEED * 9)/2);
+				controls_from_command(cmd.command, cmd.value, cmd.value);
+				speed1 = AUTOMODE_SPEED;
+				speed2 = speed1;
 				goto autonoma;
 				break;
 			case 101:
 				//automode stop
 				autonoma = 0;
 				reset_commands(&cmd);
-				speed_d = 0;
+				speed1 = 0;
+				speed2 = 0;
 				stop_motors(&huart6);
 				break;
 			case 102:
@@ -227,12 +229,15 @@ int main(void)
 				break;
 			case 0:
 				stop_motors(&huart6);
-				speed_d = ((cmd.value * 9) / 2);
+				speed1 = cmd.value;
+				speed2 = speed1;
 				break;
 			default:
-				send_command_motor(&huart6,cmd.command,cmd.value);
-				speed_d = ((cmd.value * 9) / 2);
+				speed1 = cmd.value;
+				speed2 = speed1;
+				controls_from_command(cmd.command, speed1, speed2);
 			}
+			reset_pid_variabiles();
 		}
 		/* Comando per cambiare la luminosità della matrice del led */
 
@@ -258,37 +263,23 @@ int main(void)
 
 		/* ------ ENCODER --------- */
 			 if (HAL_GetTick() - tick > 100L) {
-				if (autonoma == 0){
-				new_speed_command = motor_encoder(&htim4,&htim3, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
+				/*if (autonoma == 0){
+				new_speed_command = motor_encoder(&htim4,&htim3,&huart2, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
 
 				if (new_speed_command != cmd.value) {
 					send_command_motor(&huart6,cmd.command,new_speed_command);
 				}
 				cmd.value = new_speed_command;
 				new_speed_command = 0;
-				}else{
-					new_speed1 = motor_encoder_auto(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
-					new_speed2 = motor_encoder_auto(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd);
+				}else{*/
+				new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
+				new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd);
+				controls_from_command(cmd.command, new_speed1, new_speed2);
 
-					switch (cmd.command){
-						case 9:
-							drive_backwards(&huart6, new_speed2, new_speed1);
-							break;
-						case 8:
-							sprintf(data3, "SPEED %d --- %d \n\r",new_speed1, new_speed2);
-							HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
-							drive_forward(&huart6, new_speed2, new_speed1);
-							break;
-						case 10:
-							turn_right(&huart6, new_speed2, new_speed1);
-							break;
-						case 11:
-							turn_left(&huart6, new_speed2, new_speed1);
-							break;
-					}
-				}
+				//}
 				cnt1 = __HAL_TIM_GET_COUNTER(&htim4);
 				cnt2 = __HAL_TIM_GET_COUNTER(&htim3);
+
 
 				tick = HAL_GetTick();
 			}
@@ -296,6 +287,23 @@ int main(void)
 		/* ----- FINE ENCODER ------  */
 	}
 
+}
+
+void controls_from_command(int command, uint16_t new_speed1, uint16_t new_speed2){
+	switch (command){
+		case 9:
+			drive_backwards(&huart6, new_speed2, new_speed1);
+			break;
+		case 8:
+			drive_forward(&huart6, new_speed2, new_speed1);
+			break;
+		case 10:
+			turn_right(&huart6, new_speed2, new_speed1);
+			break;
+		case 11:
+			turn_left(&huart6, new_speed2, new_speed1);
+			break;
+	}
 }
 
 
@@ -308,20 +316,27 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-
+	//send_command_sonar(&hi2c1, 0xE0);
 	//front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-	rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+	//rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
 
 	/* if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
 		stop_motors(&huart6);
-	} */
+	}
 
 	sprintf(dataz, "SONAR %d --- %d ",front_sonar, rear_sonar);
 	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
-
+	*/
 
 }
 
+void reset_pid_variabiles(){
+	error_pre_speed_1 = 0;
+	error_pre_speed_2 = 0;
+	pid_i_pre1 = 0;
+	pid_i_pre2 = 0;
+
+}
 
 void read_line(t_motorcommand* cmd){
 	int tmp = cmd->command;
@@ -331,21 +346,24 @@ void read_line(t_motorcommand* cmd){
 		speed2 = speed1;
 		cmd->command = 8;
 	}else if ((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = AUTOMODE_SPEED;
+		speed2 = ceil(ks*AUTOMODE_SPEED);
 		speed1 = ceil(kd*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = AUTOMODE_SPEED;
+		speed1 = ceil(ks*AUTOMODE_SPEED);
 		speed2 = ceil(kd*AUTOMODE_SPEED);
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed2 = AUTOMODE_SPEED;
+		speed1 = ceil(ks*AUTOMODE_SPEED);
+		speed2 = ceil(kd*AUTOMODE_SPEED);
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}else if((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed1 = AUTOMODE_SPEED;
+		speed2 = ceil(ks*AUTOMODE_SPEED);
+		speed1 = ceil(kd*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 	}
 
+	controls_from_command(cmd->command, speed2, speed1);
 }
 
 

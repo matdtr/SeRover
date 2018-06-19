@@ -79,7 +79,7 @@ void motor_Init(UART_HandleTypeDef* huart)
 
 }
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command, uint16_t* motor_speed){
+/*uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command, uint16_t* motor_speed){
 	uint16_t cnt2 = 0;
 	uint16_t cnt3 = 0;
 	uint16_t diff = 0;
@@ -159,21 +159,22 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, uint16_
 	}
 	return speed_command;
 
-}
+}*/
 
 
-uint16_t motor_encoder_auto(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, float* error_pre, float* pid_i_pre, t_motorcommand* cmd){
-	float kp = 1;
-	float kd = 10;
-	float ki = 0.4;
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, float* error_pre, float* pid_i_pre, t_motorcommand* cmd){
+	double kp = 0.6;
+	double kd = 10;
+	double ki = 0.2;
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
-	uint32_t speed = 0;
-	int errore = 0;
-	float pid_p = 0;
-	float pid_d = 0;
-	float pid_i = 0;
-	int speed_d = (speed_des*9)/2;
+	double speed = 0;
+	double errore = 0;
+	double pid_p = 0;
+	double pid_d = 0;
+	double pid_i = 0;
+	double pid =0;
+	double speed_d = (speed_des*9)/2;
 	uint16_t final = 0;
 	char msg[80];
 
@@ -190,53 +191,76 @@ uint16_t motor_encoder_auto(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, 
 			diff = (65535 - *counter) + cnt2;
 	}
 
-	speed = (((diff * 60)/ (64*19)))*10;
+	speed = ((diff * 60)/ (64*19))*10;
 	if (speed == 32330){
 		speed = 0;
 	}
 
 	*motor_speed = speed;
 
-	errore = speed_d - *motor_speed;
 
-	pid_p = kp*(float)errore;
-	pid_d = kd * (((float)errore - *error_pre)/100);
+	/*if (speed_d == 0 && speed_d < speed ){
+		switch (cmd->command){
+			case 8:
+				cmd->command += 1;
+				break;
+			case 9:
+				cmd->command -= 1;
+				break;
+			case 10:
+				cmd->command += 1;
+				break;
+			case 11:
+				cmd->command -= 1;
+				break;
+			}
+	}*/
 
-	if (errore < 15){
-		pid_i = *pid_i_pre + (ki*(float)errore);
+	errore = speed_d - speed;
+
+	pid_p = kp*errore;
+	pid_d = kd * ((errore - *error_pre)/100);
+
+	if (abs(errore) < 15){
+		return speed_command;
 	}
-
+	pid_i = *pid_i_pre + (ki*errore);
 	*pid_i_pre = pid_i;
 	*error_pre = errore;
+	pid = ((pid_p + pid_d + pid_i)*2)/9;
 
-	final = speed_command + ceil(((pid_p + pid_d + pid_i)*2)/9);
+	if (pid > 127)
+		return 127;
+
+	if (pid < 0){
+		switch (cmd->command){
+			case 8:
+				cmd->command += 1;
+				break;
+			case 9:
+				cmd->command -= 1;
+				break;
+			case 10:
+				cmd->command += 1;
+				break;
+			case 11:
+				cmd->command -= 1;
+				break;
+			}
+	}
+	if (pid < -127){
+		pid = -127;
+	}
+	final = abs(pid);
 	if (final > 127){
 		final = 127;
 	}
-/*
-	if (final < 0){
-		switch (cmd->command){
-		case 8:
-			cmd->command += 1;
-			break;
-		case 9:
-			cmd->command -= 1;
-			break;
-		case 10:
-			cmd->command += 1;
-			break;
-		case 11:
-			cmd->command -= 1;
-			break;
-		}
-		final =  abs(final);
+	if (speed != 0){
+		sprintf(msg, "---- %d ----\n\r", (final));
+		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+		sprintf(msg, "%lf %lf %lf %.2lf\n\r", (speed), (errore), speed_d, pid);
+		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 	}
 
-	sprintf(msg, "%d %d\n\r", (speed_command), cmd->command);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	sprintf(msg, "%d %d\n\r", (final), cmd->command);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);*/
 	return final;
-
-
 }

@@ -1,43 +1,10 @@
-19:34:39 **** Incremental Build of configuration Debug for project basestruct ****
+16:32:55 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
-Building file: ../Src/main.c
+Building file: ../Src/motor_handler.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
-arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
-../Src/main.c: In function 'main':
-../Src/main.c:254:4: warning: implicit declaration of function 'read_line' [-Wimplicit-function-declaration]
-    read_line(&cmd);
-    ^~~~~~~~~
-../Src/main.c:159:12: warning: unused variable 'speed_command' [-Wunused-variable]
-   uint16_t speed_command = 0;
-            ^~~~~~~~~~~~~
-../Src/main.c:158:8: warning: unused variable 'rangestring' [-Wunused-variable]
-   char rangestring[10] ;
-        ^~~~~~~~~~~
-../Src/main.c:156:8: warning: unused variable 'msg' [-Wunused-variable]
-   char msg[50];
-        ^~~
-../Src/main.c: At top level:
-../Src/main.c:326:6: warning: conflicting types for 'read_line'
- void read_line(t_motorcommand* cmd){
-      ^~~~~~~~~
-../Src/main.c:254:4: note: previous implicit declaration of 'read_line' was here
-    read_line(&cmd);
-    ^~~~~~~~~
-../Src/main.c: In function 'read_line':
-../Src/main.c:335:12: warning: implicit declaration of function 'ceil' [-Wimplicit-function-declaration]
-   speed1 = ceil(kd*AUTOMODE_SPEED);
-            ^~~~
-../Src/main.c:335:12: warning: incompatible implicit declaration of built-in function 'ceil'
-../Src/main.c:335:12: note: include '<math.h>' or provide a declaration of 'ceil'
-../Src/main.c:339:12: warning: incompatible implicit declaration of built-in function 'ceil'
-   speed2 = ceil(kd*AUTOMODE_SPEED);
-            ^~~~
-../Src/main.c:339:12: note: include '<math.h>' or provide a declaration of 'ceil'
-../Src/main.c:327:6: warning: unused variable 'tmp' [-Wunused-variable]
-  int tmp = cmd->command;
-      ^~~
-Finished building: ../Src/main.c
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
+Finished building: ../Src/motor_handler.c
  
 Building target: basestruct.elf
 Invoking: MCU GCC Linker
@@ -49,8 +16,8 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  32768	    496	   6096	  39360	   99c0	basestruct.elf
+  31032	    500	   6116	  37648	   9310	basestruct.elf
  
 
-19:34:40 Build Finished (took 601ms)
+16:32:55 Build Finished (took 557ms)
 
