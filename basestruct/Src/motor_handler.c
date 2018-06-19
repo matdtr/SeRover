@@ -157,6 +157,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	double ki = 0.3;
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
+<<<<<<< HEAD
 	double speed = 0;
 	double errore = 0;
 	double pid_p = 0;
@@ -165,6 +166,15 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	double pid =0;
 	double speed_d = (speed_des*9)/2;
 	uint16_t final = 0;
+=======
+	uint32_t speed = 0;
+	int errore = 0;
+	float pid_p = 0;
+	float pid_d = 0;
+	float pid_i = 0;
+	int speed_d = (speed_des*9)/2;
+	int final = 0;
+>>>>>>> parent of 0c44d72... encoder aggiustato
 	char msg[80];
 
 	cnt2 = __HAL_TIM_GET_COUNTER(htim);
@@ -200,6 +210,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	*error_pre = errore;
 	pid = ((pid_p + pid_d + pid_i)*2)/9;
 
+<<<<<<< HEAD
 	if (pid > 127)
 		return 127;
 
@@ -207,6 +218,15 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 		pid = -127;
 	}
 	if (pid < 0){
+=======
+
+	final = speed_command + ceil(((pid_p + pid_d + pid_i)*2)/9);
+	if (final > 127){
+		final = 127;
+	}
+	/*
+	if (final < 0){
+>>>>>>> parent of 0c44d72... encoder aggiustato
 		switch (cmd->command){
 			case 8:
 				cmd->command += 1;
@@ -223,6 +243,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 		}
 	}
 
+<<<<<<< HEAD
 	final = abs(pid);
 	if (final > 127){
 		final = 127;
@@ -233,6 +254,16 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 		sprintf(msg, "%lf %lf %lf %.2lf\n\r", (speed), (errore), speed_d, pid);
 		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 	}
+=======
+	sprintf(msg, "%d %d\n\r", (speed_command), ceil(((pid_p + pid_d + pid_i)*2)/9));
+	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+	sprintf(msg, "%d %d\n\r", (final), cmd->command);
+	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+
+	*/
+	return final;
+
+>>>>>>> parent of 0c44d72... encoder aggiustato
 
 	return final;
 }

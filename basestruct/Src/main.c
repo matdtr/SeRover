@@ -178,7 +178,6 @@ int main(void)
 
   // ---- Motor Init -------
   motor_Init(&huart6);
-  stop_motors(&huart6);
 
   // ---- LED Init -------
   ws2812_init_leds();
@@ -236,9 +235,15 @@ int main(void)
 				speed2 = speed1;
 				break;
 			default:
+<<<<<<< HEAD
 				speed1 = cmd.value;
 				speed2 = speed1;
 				controls_from_command(cmd.command, speed1, speed2);
+=======
+				stop_motors(&huart6);
+				send_command_motor(&huart6,cmd.command,cmd.value);
+				speed_d = ((cmd.value * 9) / 2);
+>>>>>>> parent of 0c44d72... encoder aggiustato
 			}
 			reset_pid_variabiles();
 		}
@@ -284,6 +289,7 @@ int main(void)
 		}
 
 		/* ------ ENCODER --------- */
+<<<<<<< HEAD
 		 if ((HAL_GetTick() - tick > 100L) && stop_sonar == 0) {
 
 			new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
@@ -296,6 +302,41 @@ int main(void)
 
 			tick = HAL_GetTick();
 		}
+=======
+			 if (HAL_GetTick() - tick > 100L) {
+				if (autonoma == 0){
+				new_speed_command = motor_encoder(&htim3,&htim4, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
+
+				if (new_speed_command != cmd.value) {
+					send_command_motor(&huart6,cmd.command,new_speed_command);
+				}
+				cmd.value = new_speed_command;
+				new_speed_command = 0;
+				}else{
+					new_speed2 = motor_encoder_auto(&htim3,&huart2, &cnt1, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd);
+					new_speed1 = motor_encoder_auto(&htim4,&huart2, &cnt2, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
+
+					switch (cmd.command){
+						case 9:
+							drive_backwards(&huart6, new_speed1, new_speed2);
+							break;
+						case 8:
+							drive_forward(&huart6, new_speed1, new_speed2);
+							break;
+						case 10:
+							turn_right(&huart6, new_speed1, new_speed2);
+							break;
+						case 11:
+							turn_left(&huart6, new_speed1, new_speed2);
+							break;
+					}
+				}
+				cnt1 = __HAL_TIM_GET_COUNTER(&htim3);
+				cnt2 = __HAL_TIM_GET_COUNTER(&htim4);
+
+				tick = HAL_GetTick();
+			}
+>>>>>>> parent of 0c44d72... encoder aggiustato
 
 		/* ----- FINE ENCODER ------  */
 	}
@@ -324,7 +365,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
  /* Set transmission flag: transfer complete*/
  UartReady = SET;
 }
-
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
