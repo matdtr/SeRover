@@ -31,7 +31,7 @@ void drive_forward(UART_HandleTypeDef* huart, char speed1, char speed2){
 }
 
 void drive_backwards(UART_HandleTypeDef* huart, char speed1, char speed2){
-	char command = 0;
+	char command = 1;
 	send_command_motor(huart,command,speed1);
 	command = 5;
 	send_command_motor(huart,command,speed2);

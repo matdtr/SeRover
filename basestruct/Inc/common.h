@@ -16,7 +16,6 @@ typedef struct motorcommand
 } t_motorcommand;
 
 
-
 /*
  *  Reset di tutti i comandi
  */
