@@ -17,8 +17,6 @@ void send_command_motor(UART_HandleTypeDef* huart,char command,char speed){
 	HAL_UART_Transmit(huart, (uint8_t*)&command, sizeof(command), 0xFFFFFF);
 	HAL_UART_Transmit(huart, (uint8_t*)&speed, sizeof(speed), 0xFFFFFF);
 	HAL_UART_Transmit(huart, (uint8_t*)&checksum, sizeof(checksum), 0xFFFFFF);
-	HAL_Delay(50);
-
 
 }
 
@@ -52,16 +50,7 @@ void turn_left(UART_HandleTypeDef* huart, char speed1, char speed2){
 }
 
 void stop_motors(UART_HandleTypeDef* huart){
-	/* turn_left(huart, 0);
-	turn_right(huart,0);
-	drive_backwards(huart, 0);
-	drive_forward(huart, 0); */
-	send_command_motor(huart,11,0);
-	send_command_motor(huart,10,0);
-	send_command_motor(huart,9,0);
-	send_command_motor(huart,8,0);
-
-	HAL_Delay(50);
+	drive_forward(huart, 0, 0);
 }
 
 void motor_Init(UART_HandleTypeDef* huart)
@@ -162,10 +151,10 @@ void motor_Init(UART_HandleTypeDef* huart)
 }*/
 
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, float* error_pre, float* pid_i_pre, t_motorcommand* cmd){
-	double kp = 0.6;
-	double kd = 10;
-	double ki = 0.2;
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd){
+	double kp = 1;
+	double kd = 2;
+	double ki = 0.3;
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
 	double speed = 0;
@@ -198,24 +187,6 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 
 	*motor_speed = speed;
 
-
-	/*if (speed_d == 0 && speed_d < speed ){
-		switch (cmd->command){
-			case 8:
-				cmd->command += 1;
-				break;
-			case 9:
-				cmd->command -= 1;
-				break;
-			case 10:
-				cmd->command += 1;
-				break;
-			case 11:
-				cmd->command -= 1;
-				break;
-			}
-	}*/
-
 	errore = speed_d - speed;
 
 	pid_p = kp*errore;
@@ -232,6 +203,9 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	if (pid > 127)
 		return 127;
 
+	if (pid < -127){
+		pid = -127;
+	}
 	if (pid < 0){
 		switch (cmd->command){
 			case 8:
@@ -246,11 +220,9 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 			case 11:
 				cmd->command -= 1;
 				break;
-			}
+		}
 	}
-	if (pid < -127){
-		pid = -127;
-	}
+
 	final = abs(pid);
 	if (final > 127){
 		final = 127;

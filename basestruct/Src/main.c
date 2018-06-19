@@ -70,12 +70,13 @@ uint16_t rear_sonar = 0;
 
 uint16_t speed1 = AUTOMODE_SPEED;
 uint16_t speed2 = AUTOMODE_SPEED;
-float error_pre_speed_1 = 0;
-float error_pre_speed_2 = 0;
-float pid_i_pre1 = 0;
-float pid_i_pre2 = 0;
-float kd = 0.7;
-float ks = 0.7;
+double error_pre_speed_1 = 0;
+double error_pre_speed_2 = 0;
+double pid_i_pre1 = 0;
+double pid_i_pre2 = 0;
+double kd = 0.7;
+double ks = 0.7;
+int true = 1;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -154,7 +155,7 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  //HAL_TIM_Base_Start_IT(&htim11);
+  HAL_TIM_Base_Start_IT(&htim11);
 
 
   char data3[100];
@@ -173,6 +174,7 @@ int main(void)
   t_motorcommand cmd;
   uint16_t new_speed1 = 0;
   uint16_t new_speed2 = 0;
+  int stop_sonar = 0;
 
   // ---- Motor Init -------
   motor_Init(&huart6);
@@ -181,13 +183,15 @@ int main(void)
   // ---- LED Init -------
   ws2812_init_leds();
 
-  uint32_t tick = HAL_GetTick();
 
   // ---- Sonar Init -------
 
   sonar_Init(&hi2c1, FRONT_SONAR_ADDR, (uint8_t)2);
+  HAL_Delay(100);
   sonar_Init(&hi2c1, REAR_SONAR_ADDR, (uint8_t)2);
+  HAL_Delay(100);
 
+  uint32_t tick = HAL_GetTick();
   while (1) {
 
 		i = read_ble(c);
@@ -209,7 +213,6 @@ int main(void)
 				controls_from_command(cmd.command, cmd.value, cmd.value);
 				speed1 = AUTOMODE_SPEED;
 				speed2 = speed1;
-				goto autonoma;
 				break;
 			case 101:
 				//automode stop
@@ -252,37 +255,47 @@ int main(void)
 			HAL_Delay(100);
 		}
 
-		autonoma:
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			read_line(&cmd);
+			if(true % 2 == 0){
+				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
+			}else{
+				rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+			}
+			true++;
+			sprintf(dataz, "SONAR %d --- %d \r\n ",front_sonar, rear_sonar);
+			HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
 
-			// TODO fai qualcosa
+			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
+				speed1 = AUTOMODE_SPEED;
+				speed2= AUTOMODE_SPEED;
+				read_line(&cmd);
+				HAL_Delay(50);
+				stop_sonar = 0;
+			} else{
+				stop_motors(&huart6);
+				speed1 = 0;
+				speed2 = 0;
+				reset_pid_variabiles();
+				stop_sonar = 1;
+			}
+
 		}
 
 		/* ------ ENCODER --------- */
-			 if (HAL_GetTick() - tick > 100L) {
-				/*if (autonoma == 0){
-				new_speed_command = motor_encoder(&htim4,&htim3,&huart2, &cnt1,&cnt2,speed_d, cmd.value, &motor_speed);
+		 if ((HAL_GetTick() - tick > 100L) && stop_sonar == 0) {
 
-				if (new_speed_command != cmd.value) {
-					send_command_motor(&huart6,cmd.command,new_speed_command);
-				}
-				cmd.value = new_speed_command;
-				new_speed_command = 0;
-				}else{*/
-				new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
-				new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd);
-				controls_from_command(cmd.command, new_speed1, new_speed2);
+			new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd);
+			new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd);
+			controls_from_command(cmd.command, new_speed1, new_speed2);
 
-				//}
-				cnt1 = __HAL_TIM_GET_COUNTER(&htim4);
-				cnt2 = __HAL_TIM_GET_COUNTER(&htim3);
+			cnt1 = __HAL_TIM_GET_COUNTER(&htim4);
+			cnt2 = __HAL_TIM_GET_COUNTER(&htim3);
 
 
-				tick = HAL_GetTick();
-			}
+			tick = HAL_GetTick();
+		}
 
 		/* ----- FINE ENCODER ------  */
 	}
@@ -316,17 +329,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	//send_command_sonar(&hi2c1, 0xE0);
-	//front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-	//rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
-
-	/* if((front_sonar < MIN_DISTANCE) || (rear_sonar < MIN_DISTANCE)){
-		stop_motors(&huart6);
-	}
-
-	sprintf(dataz, "SONAR %d --- %d ",front_sonar, rear_sonar);
-	HAL_UART_Transmit(&huart2, (uint8_t*) dataz, strlen(dataz),0xFFFFFF);
-	*/
+	true=0;
 
 }
 
@@ -339,31 +342,34 @@ void reset_pid_variabiles(){
 }
 
 void read_line(t_motorcommand* cmd){
-	int tmp = cmd->command;
+	uint16_t tmp = cmd->command;
 
 	if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
 		speed1 = AUTOMODE_SPEED;
 		speed2 = speed1;
 		cmd->command = 8;
 	}else if ((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = ceil(ks*AUTOMODE_SPEED);
-		speed1 = ceil(kd*AUTOMODE_SPEED);
+		speed2 = (ks*AUTOMODE_SPEED);
+		speed1 = (kd*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = ceil(ks*AUTOMODE_SPEED);
-		speed2 = ceil(kd*AUTOMODE_SPEED);
+		speed1 = (ks*AUTOMODE_SPEED);
+		speed2 = (kd*AUTOMODE_SPEED);
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = ceil(ks*AUTOMODE_SPEED);
-		speed2 = ceil(kd*AUTOMODE_SPEED);
+		speed1 = (ks*AUTOMODE_SPEED);
+		speed2 = (kd*AUTOMODE_SPEED);
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 	}else if((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = ceil(ks*AUTOMODE_SPEED);
-		speed1 = ceil(kd*AUTOMODE_SPEED);
+		speed2 = (ks*AUTOMODE_SPEED);
+		speed1 = (kd*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 	}
 
-	controls_from_command(cmd->command, speed2, speed1);
+	if (tmp != cmd->command){
+		reset_pid_variabiles();
+		controls_from_command(cmd->command, speed1, speed2);
+	}
 }
 
 

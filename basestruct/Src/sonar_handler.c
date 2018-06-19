@@ -13,7 +13,7 @@ uint16_t read_range(I2C_HandleTypeDef *hi2c, uint16_t dev_address) {
 	  uint8_t range_hb;
 
 	  send_command_sonar(hi2c,dev_address);
-	  for(int i=0;i<100;i++);
+	  HAL_Delay(70);
 	  HAL_I2C_Mem_Read(hi2c, dev_address, 2, 1, &range, 1, HAL_MAX_DELAY);
 	  range_hb = range;
 
