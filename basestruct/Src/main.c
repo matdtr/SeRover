@@ -74,8 +74,13 @@ double error_pre_speed_1 = 0;
 double error_pre_speed_2 = 0;
 double pid_i_pre1 = 0;
 double pid_i_pre2 = 0;
-double kr = 0.6;
-double kf = 0.9;
+//double kr = 0.6;
+//double kf = 0.9;
+
+double kr= 0.5;
+double kf= 0.8;
+
+
 int true = 1;
 int stop_sonar = 0;
 /* USER CODE BEGIN PV */
@@ -391,6 +396,10 @@ void read_line(t_motorcommand* cmd){
 	}
 
 	if (tmp != cmd->command){
+		if(cmd->command == 8 && (tmp == 10 || tmp == 11)){
+			speed1 = 0.8 * AUTOMODE_SPEED;
+			speed2 = speed1;
+		}
 		sprintf(msg, "IF: %d \n\r",pippo);
 		HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 		//reset_pid_variabiles();
