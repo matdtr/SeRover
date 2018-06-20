@@ -77,6 +77,7 @@ double pid_i_pre2 = 0;
 double kr = 0.6;
 double kf = 0.9;
 int true = 1;
+int stop_sonar = 0;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -168,7 +169,7 @@ int main(void)
   t_motorcommand cmd;
   uint16_t new_speed1 = 0;
   uint16_t new_speed2 = 0;
-  int stop_sonar = 0;
+
 
   // ---- Motor Init -------
   motor_Init(&huart6);
@@ -256,28 +257,31 @@ int main(void)
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			 if(true == 1){
+			 if(true == 2 && stop_sonar == 0){
 				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-			}else if(true == 2){
+				stop_sonar = 1;
+				sprintf(data3, "sonar 1 %d \n\r", front_sonar);
+				HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
+			}else if(true == 4 && stop_sonar == 0){
 				rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
-				true = 0;
-			}
+				stop_sonar = 1;
+				true = 0 ;
+				sprintf(data3, "Sonar 2 %d \n\r", rear_sonar);
+				HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
+			}
 
 
 			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
 				speed1 = AUTOMODE_SPEED;
 				speed2= AUTOMODE_SPEED;
 				read_line(&cmd);
-				stop_sonar = 1;
-				}
-				stop_sonar = 0;
-			} else{
+
+			}else{
 				stop_motors(&huart6);
 				speed1 = 0;
 				speed2 = 0;
 				reset_pid_variabiles();
-				stop_sonar = 1;
 			}
 
 
@@ -290,8 +294,8 @@ int main(void)
 			new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd, diff);
 			new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd,  diff);
 
-			sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
-			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
+			//sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
+			//HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 			controls_from_command(cmd.command, new_speed1, new_speed2);
 
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim4);
@@ -333,8 +337,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
+	char msg[30];
 	true++;
 
+	stop_sonar = 0;
+	sprintf(msg, "true - %d --- stop - %d ---  \n\r", true,stop_sonar);
+	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+	if(true >= 5)
+		true =0;
 }
 
 void reset_pid_variabiles(){

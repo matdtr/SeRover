@@ -215,11 +215,11 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	}
 
 
-	sprintf(msg, "%lf --- %lf --- %lf --- %lf --- %lf \n\r",pid_i, pid_d, pid_p,*pid_i_pre,errore);
+	/*sprintf(msg, "%lf --- %lf --- %lf --- %lf --- %lf \n\r",pid_i, pid_d, pid_p,*pid_i_pre,errore);
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 	sprintf(msg, "%lf %lf \n\r",speed, speed_d);
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-
+	 */
 
 	return final;
 
