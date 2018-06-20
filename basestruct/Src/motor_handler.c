@@ -161,7 +161,7 @@ uint16_t motor_encoder(UART_HandleTypeDef* huart,TIM_HandleTypeDef* htim,TIM_Han
 uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick){
 	double kp = 0.3;
 	double kd = 7;
-	double ki = 0.7;
+	double ki = 0.9;
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
 	double speed = 0;
@@ -203,7 +203,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 		return speed_command;
 	}
 
-	pid_i = *pid_i_pre + (ki*errore);
+	pid_i = *pid_i_pre * ki + (ki*errore);
 	*pid_i_pre = pid_i;
 	*error_pre = errore;
 	pid = ((pid_p + pid_d + pid_i)*2)/9;
@@ -219,6 +219,7 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 	sprintf(msg, "%lf %lf \n\r",speed, speed_d);
 	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+
 
 	return final;
 

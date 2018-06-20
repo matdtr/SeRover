@@ -74,8 +74,8 @@ double error_pre_speed_1 = 0;
 double error_pre_speed_2 = 0;
 double pid_i_pre1 = 0;
 double pid_i_pre2 = 0;
-double kd = 1.2;
-double ks = 1;
+double kr = 0.6;
+double kf = 0.9;
 int true = 1;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -140,10 +140,7 @@ int main(void)
 
   MX_I2C1_Init();
 
-
   MX_ADC1_Init();
-
-
 
   /* USER CODE BEGIN 2 */
   HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -154,7 +151,6 @@ int main(void)
 
   HAL_TIM_Base_Init(&htim11);
   HAL_TIM_Base_Start_IT(&htim11);
-
 
   char data3[100];
   char msg[50];
@@ -242,7 +238,7 @@ int main(void)
 				speed2 = speed1;
 				controls_from_command(cmd.command, speed1, speed2);
 			}
-			reset_pid_variabiles();
+			//reset_pid_variabiles();
 		}
 		/* Comando per cambiare la luminosità della matrice del led */
 
@@ -260,21 +256,20 @@ int main(void)
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			/* if(true % 2 == 0){
+			 if(true == 1){
 				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
-			}else{
+			}else if(true == 2){
 				rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
+				true = 0;
 			}
 
-			true++;
+
 
 			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
 				speed1 = AUTOMODE_SPEED;
 				speed2= AUTOMODE_SPEED;
 				read_line(&cmd);
-				if(stop_sonar == 1){
-					stop_sonar = 0;
-					tick = HAL_GetTick();
+				stop_sonar = 1;
 				}
 				stop_sonar = 0;
 			} else{
@@ -283,9 +278,8 @@ int main(void)
 				speed2 = 0;
 				reset_pid_variabiles();
 				stop_sonar = 1;
-			} */
+			}
 
-			read_line(&cmd);
 
 		}
 
@@ -296,8 +290,8 @@ int main(void)
 			new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd, diff);
 			new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd,  diff);
 
-			//sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
-			//HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
+			sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
+			HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 			controls_from_command(cmd.command, new_speed1, new_speed2);
 
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim4);
@@ -339,7 +333,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	true=0;
+	true++;
 
 }
 
@@ -360,27 +354,28 @@ void read_line(t_motorcommand* cmd){
 		speed2 = speed1;
 		cmd->command = 8;
 		pippo = 1;
+
 	}else if ((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = (ks*AUTOMODE_SPEED)+4;
-		speed1 = (kd*AUTOMODE_SPEED)+2;
+		speed2 = (kf*AUTOMODE_SPEED);
+		speed1 = kr*AUTOMODE_SPEED;
 		cmd->command = 11; //giro a sx
 		pippo = 2;
 
 	} else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] < LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = (ks*AUTOMODE_SPEED);
-		speed2 = (kd*AUTOMODE_SPEED);
+		speed1 = (kf*AUTOMODE_SPEED);
+		speed2 = kr*AUTOMODE_SPEED;
 		cmd->command = 10; // giro a dx
 		pippo = 3;
 
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = (ks*AUTOMODE_SPEED);
-		speed2 = (kd*AUTOMODE_SPEED);
+		speed1 = (kf*AUTOMODE_SPEED);
+		speed2 = kr*AUTOMODE_SPEED;
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 		pippo = 4;
 
 	}else if((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = (ks*AUTOMODE_SPEED)+6;
-		speed1 = (kd*AUTOMODE_SPEED)-1;
+		speed2 = (kf*AUTOMODE_SPEED);
+		speed1 = (kr*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 		pippo = 5;
 	}
@@ -388,7 +383,7 @@ void read_line(t_motorcommand* cmd){
 	if (tmp != cmd->command){
 		sprintf(msg, "IF: %d \n\r",pippo);
 		HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-		reset_pid_variabiles();
+		//reset_pid_variabiles();
 		controls_from_command(cmd->command, speed1, speed2);
 	}
 
