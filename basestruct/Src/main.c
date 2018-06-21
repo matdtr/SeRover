@@ -166,6 +166,9 @@ int main(void)
   uint16_t range_sonar2 = 0;
   char c[11];
   int brightness = 0;
+  int red = 0;
+  int green = 0;
+  int blue = 0;
   int i = 0;
   int go = 0;
   t_motorcommand cmd;
@@ -236,6 +239,17 @@ int main(void)
 				speed1 = cmd.value;
 				speed2 = speed1;
 				break;
+			case 51:
+				red = cmd.value;
+				break;
+			case 52:
+				green = cmd.value;
+				break;
+			case 53:
+				blue = cmd.value;
+				cmd.value = 0;
+				goto easterEgg;
+				break;
 			default:
 				speed1 = cmd.value;
 				speed2 = speed1;
@@ -244,6 +258,11 @@ int main(void)
 			//reset_pid_variabiles();
 		}
 		/* Comando per cambiare la luminosità della matrice del led */
+		easterEgg:
+		if(cmd.command == 53){
+			ws2812_set_color_matrix(red, green, blue);
+			HAL_Delay(100);
+		}
 
 		led_setup:
 		if((cmd.command == 99) && (cmd.value >1)){
