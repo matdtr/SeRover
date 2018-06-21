@@ -56,7 +56,7 @@
 #define REAR_SONAR_ADDR  0xE2
 
 #define MIN_DISTANCE 35
-#define AUTOMODE_SPEED 16
+#define AUTOMODE_SPEED 35
 
 /* USER CODE BEGIN Private defines */
 

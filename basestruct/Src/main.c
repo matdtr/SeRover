@@ -78,7 +78,7 @@ double pid_i_pre2 = 0;
 //double kf = 0.9;
 
 double kr= 0.65;
-double kf= 0.8;
+double kf= 0.9;
 
 
 int true = 1;
@@ -156,7 +156,8 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  HAL_TIM_Base_Start_IT(&htim11);
+  //HAL_TIM_Base_Start_IT(&htim11);
+
 
   char data3[100];
   uint16_t cnt1 = 0;
@@ -258,7 +259,7 @@ int main(void)
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			 if(true == 1 && stop_sonar == 0){
+			/*  if(true == 1 && stop_sonar == 0){
 				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
 				stop_sonar = 1;
 				sprintf(data3, "sonar 1 %d \n\r", front_sonar);
@@ -270,26 +271,27 @@ int main(void)
 				sprintf(data3, "Sonar 2 %d \n\r", rear_sonar);
 				HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-			}
+			} */
 
-
-			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
-				if((front_sonar!=0) || (go!=0)){
+			/*if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
+				if((front_sonar != 0) || (go != 0)){
 					speed1 = AUTOMODE_SPEED;
 					speed2= AUTOMODE_SPEED;
 					read_line(&cmd);
 					go = 1;
 				}
-
 			}else{
-				if((front_sonar!=0) || (go!=1)){
+				if((front_sonar != 0) || (go != 1)){
 					stop_motors(&huart6);
 					speed1 = 0;
 					speed2 = 0;
 					go = 0;
 				}
 
-			}
+			} */
+
+			read_line(&cmd);
+
 
 
 		}
@@ -344,16 +346,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	//TODO callback timer11 ogni 0.5s devo leggere i valori del sonar.
-	char msg[30];
 	true++;
 
 	stop_sonar = 0;
 
 	if(true > 2)
 		true = 1;
-
-	sprintf(msg, "true - %d --- stop - %d ---  \n\r", true,stop_sonar);
-	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 }
 
 
