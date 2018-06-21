@@ -171,6 +171,7 @@ int main(void)
   char c[11];
   int brightness = 0;
   int i = 0;
+  int go = 0;
   t_motorcommand cmd;
   uint16_t new_speed1 = 0;
   uint16_t new_speed2 = 0;
@@ -262,12 +263,12 @@ int main(void)
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			 if(true == 2 && stop_sonar == 0){
+			 if(true == 1 && stop_sonar == 0){
 				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
 				stop_sonar = 1;
 				sprintf(data3, "sonar 1 %d \n\r", front_sonar);
 				HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
-			}else if(true == 4 && stop_sonar == 0){
+			}else if(true == 2 && stop_sonar == 0){
 				rear_sonar = read_range(&hi2c1,REAR_SONAR_ADDR);
 				stop_sonar = 1;
 				true = 0 ;
@@ -278,15 +279,22 @@ int main(void)
 
 
 			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
-				speed1 = AUTOMODE_SPEED;
-				speed2= AUTOMODE_SPEED;
-				read_line(&cmd);
+				if((front_sonar!=0) || (go!=0)){
+					speed1 = AUTOMODE_SPEED;
+					speed2= AUTOMODE_SPEED;
+					read_line(&cmd);
+					go = 1;
+				}
 
 			}else{
-				stop_motors(&huart6);
-				speed1 = 0;
-				speed2 = 0;
-				reset_pid_variabiles();
+				if((front_sonar!=0) || (go!=1)){
+					stop_motors(&huart6);
+					speed1 = 0;
+					speed2 = 0;
+					//reset_pid_variabiles();
+					go = 0;
+				}
+
 			}
 
 
@@ -346,10 +354,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	true++;
 
 	stop_sonar = 0;
+
+	if(true > 2)
+		true = 1;
+
 	sprintf(msg, "true - %d --- stop - %d ---  \n\r", true,stop_sonar);
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	if(true >= 5)
-		true =0;
 }
 
 void reset_pid_variabiles(){
