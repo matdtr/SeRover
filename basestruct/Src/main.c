@@ -291,7 +291,6 @@ int main(void)
 					stop_motors(&huart6);
 					speed1 = 0;
 					speed2 = 0;
-					//reset_pid_variabiles();
 					go = 0;
 				}
 

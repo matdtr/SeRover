@@ -194,6 +194,21 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 
 	*motor_speed = speed;
 
+	sprintf(msg, "%d %d \n\r", __HAL_TIM_IS_TIM_COUNTING_DOWN(htim), cmd->command);
+	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+	if(__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) && (cmd->command == 8 || cmd->command == 0)){
+		cmd->command = 9;
+		ki = 1.2;
+		sprintf(msg, "Inverti 2\n\r");
+		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+	}else if(!__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) && (cmd->command == 9 || cmd->command == 0)){
+		cmd->command = 8;
+		speed = 0 - speed;
+		ki = 1.2;
+		sprintf(msg, "Inverti 1\n\r");
+		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+	}
+
 	errore = speed_d - speed;
 
 	pid_p = kp*errore;
@@ -214,12 +229,6 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 		final = 127;
 	}
 
-
-	/*sprintf(msg, "%lf --- %lf --- %lf --- %lf --- %lf \n\r",pid_i, pid_d, pid_p,*pid_i_pre,errore);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	sprintf(msg, "%lf %lf \n\r",speed, speed_d);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	 */
 
 	return final;
 

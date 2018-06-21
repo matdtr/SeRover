@@ -1,51 +1,10 @@
-13:24:04 **** Incremental Build of configuration Debug for project basestruct ****
+11:41:49 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
-Building file: ../Src/main.c
+Building file: ../Src/motor_handler.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
-arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
-../Src/main.c: In function 'main':
-../Src/main.c:215:5: warning: implicit declaration of function 'controls_from_command' [-Wimplicit-function-declaration]
-     controls_from_command(cmd.command, cmd.value, cmd.value);
-     ^~~~~~~~~~~~~~~~~~~~~
-../Src/main.c:283:5: warning: implicit declaration of function 'read_line' [-Wimplicit-function-declaration]
-     read_line(&cmd);
-     ^~~~~~~~~
-../Src/main.c:289:5: warning: implicit declaration of function 'reset_pid_variabiles' [-Wimplicit-function-declaration]
-     reset_pid_variabiles();
-     ^~~~~~~~~~~~~~~~~~~~
-../Src/main.c:166:12: warning: unused variable 'new_speed_command' [-Wunused-variable]
-   uint16_t new_speed_command = 0;
-            ^~~~~~~~~~~~~~~~~
-../Src/main.c:165:12: warning: unused variable 'speed_command' [-Wunused-variable]
-   uint16_t speed_command = 0;
-            ^~~~~~~~~~~~~
-../Src/main.c:164:8: warning: unused variable 'rangestring' [-Wunused-variable]
-   char rangestring[10] ;
-        ^~~~~~~~~~~
-../Src/main.c:162:8: warning: unused variable 'msg' [-Wunused-variable]
-   char msg[50];
-        ^~~
-../Src/main.c: At top level:
-../Src/main.c:318:6: warning: conflicting types for 'controls_from_command'
- void controls_from_command(int command, uint16_t new_speed1, uint16_t new_speed2){
-      ^~~~~~~~~~~~~~~~~~~~~
-../Src/main.c:215:5: note: previous implicit declaration of 'controls_from_command' was here
-     controls_from_command(cmd.command, cmd.value, cmd.value);
-     ^~~~~~~~~~~~~~~~~~~~~
-../Src/main.c:355:6: warning: conflicting types for 'reset_pid_variabiles'
- void reset_pid_variabiles(){
-      ^~~~~~~~~~~~~~~~~~~~
-../Src/main.c:289:5: note: previous implicit declaration of 'reset_pid_variabiles' was here
-     reset_pid_variabiles();
-     ^~~~~~~~~~~~~~~~~~~~
-../Src/main.c:363:6: warning: conflicting types for 'read_line'
- void read_line(t_motorcommand* cmd){
-      ^~~~~~~~~
-../Src/main.c:283:5: note: previous implicit declaration of 'read_line' was here
-     read_line(&cmd);
-     ^~~~~~~~~
-Finished building: ../Src/main.c
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
+Finished building: ../Src/motor_handler.c
  
 Building target: basestruct.elf
 Invoking: MCU GCC Linker
@@ -57,8 +16,8 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  32880	    516	   6144	  39540	   9a74	basestruct.elf
+  33144	    516	   6144	  39804	   9b7c	basestruct.elf
  
 
-13:24:05 Build Finished (took 560ms)
+11:41:50 Build Finished (took 605ms)
 
