@@ -158,10 +158,10 @@ uint16_t motor_encoder(UART_HandleTypeDef* huart,TIM_HandleTypeDef* htim,TIM_Han
 
 } */
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick){
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick){
 	double kp = 0.3;
 	double kd = 7;
-	double ki = 0.9;
+	double ki = 0.7;
 	uint16_t cnt2 = 0;
 	uint16_t diff = 0;
 	double speed = 0;
@@ -172,7 +172,6 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 	double pid =0;
 	double speed_d = (speed_des*9)/2;
 	uint16_t final = 0;
-	char msg[80];
 
 	cnt2 = __HAL_TIM_GET_COUNTER(htim);
 	if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim)) {
@@ -194,19 +193,23 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 
 	*motor_speed = speed;
 
-	sprintf(msg, "%d %d \n\r", __HAL_TIM_IS_TIM_COUNTING_DOWN(htim), cmd->command);
-	HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	if(__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) && (cmd->command == 8 || cmd->command == 0)){
+
+	if((__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) == 1) && (cmd->command == 8 || cmd->command == 0) && speed_d == 0){
+		if(speed == 0)
+			return speed_command;
+
 		cmd->command = 9;
-		ki = 1.2;
-		sprintf(msg, "Inverti 2\n\r");
-		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-	}else if(!__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) && (cmd->command == 9 || cmd->command == 0)){
+		ki = 0.1;
+		kd =5;
+		kp = 0.4;
+	}else if((__HAL_TIM_IS_TIM_COUNTING_DOWN(htim) == 0) && (cmd->command == 9 || cmd->command == 0) && speed_d == 0){
+		if(speed == 0)
+			return speed_command;
 		cmd->command = 8;
 		speed = 0 - speed;
-		ki = 1.2;
-		sprintf(msg, "Inverti 1\n\r");
-		HAL_UART_Transmit(huart, (uint8_t*) msg, strlen(msg),0xFFFFFF);
+		ki = 0.1;
+		kd = 5;
+		kp = 0.4;
 	}
 
 	errore = speed_d - speed;
@@ -225,8 +228,8 @@ uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint1
 
 	final = abs(pid);
 
-	if (final > 127){
-		final = 127;
+	if (final > 100){
+		final = 100;
 	}
 
 

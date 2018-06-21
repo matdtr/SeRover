@@ -33,6 +33,6 @@ void motor_Init(UART_HandleTypeDef* huart);
 
 //uint16_t motor_encoder(UART_HandleTypeDef* huart,TIM_HandleTypeDef* htim,TIM_HandleTypeDef* htim2, uint16_t* counter,uint16_t* counter2,uint16_t speed_d, uint16_t speed_command,double* error_pre, uint16_t* motor_speed);
 
-uint16_t motor_encoder(TIM_HandleTypeDef* htim, UART_HandleTypeDef* huart, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick);
+uint16_t motor_encoder(TIM_HandleTypeDef* htim, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick);
 
 	#endif /* MOTOR_HANDLER_H_ */

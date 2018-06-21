@@ -1,4 +1,4 @@
-11:41:49 **** Incremental Build of configuration Debug for project basestruct ****
+13:27:45 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
 Building file: ../Src/motor_handler.c
 Invoking: MCU GCC Compiler
@@ -16,8 +16,8 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  33144	    516	   6144	  39804	   9b7c	basestruct.elf
+  33136	    516	   6136	  39788	   9b6c	basestruct.elf
  
 
-11:41:50 Build Finished (took 605ms)
+13:27:46 Build Finished (took 702ms)
 

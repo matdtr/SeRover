@@ -77,7 +77,7 @@ double pid_i_pre2 = 0;
 //double kr = 0.6;
 //double kf = 0.9;
 
-double kr= 0.5;
+double kr= 0.65;
 double kf= 0.8;
 
 
@@ -159,11 +159,6 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim11);
 
   char data3[100];
-  char msg[50];
-
-  char rangestring[10] ;
-  uint16_t speed_command = 0;
-  uint16_t new_speed_command = 0;
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
   uint16_t range_sonar1 = 0;
@@ -303,8 +298,8 @@ int main(void)
 		 if ((HAL_GetTick() - tick > 100L)) {
 
 			uint32_t diff = HAL_GetTick()-tick;
-			new_speed1 = motor_encoder(&htim4,&huart2, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd, diff);
-			new_speed2 = motor_encoder(&htim3,&huart2, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd,  diff);
+			new_speed1 = motor_encoder(&htim4, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd, diff);
+			new_speed2 = motor_encoder(&htim3, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd,  diff);
 
 			//sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
 			//HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
@@ -361,13 +356,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
 }
 
-void reset_pid_variabiles(){
-	error_pre_speed_1 = 0.0;
-	error_pre_speed_2 = 0.0;
-	pid_i_pre1 = 0;
-	pid_i_pre2 = 0;
-
-}
 
 void read_line(t_motorcommand* cmd){
 	uint16_t tmp = cmd->command;
@@ -411,7 +399,6 @@ void read_line(t_motorcommand* cmd){
 		}
 		sprintf(msg, "IF: %d \n\r",pippo);
 		HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg),0xFFFFFF);
-		//reset_pid_variabiles();
 		controls_from_command(cmd->command, speed1, speed2);
 	}
 
