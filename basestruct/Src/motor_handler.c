@@ -159,6 +159,7 @@ uint16_t motor_encoder(UART_HandleTypeDef* huart,TIM_HandleTypeDef* htim,TIM_Han
 } */
 
 uint16_t motor_encoder(TIM_HandleTypeDef* htim, uint16_t* counter, uint16_t speed_des,  uint16_t speed_command, uint16_t* motor_speed, double* error_pre, double* pid_i_pre, t_motorcommand* cmd, uint32_t difftick){
+
 	double kp = 0.3;
 	double kd = 7;
 	double ki = 0.7;

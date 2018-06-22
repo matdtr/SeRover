@@ -52,6 +52,17 @@ void fillBufferBlack() {
 	ws2812_apply_colors();
 }
 
+void ws2812_auto_mode(){
+	int x[] = {1,4,7,8,10,12,13,14,15,16,17,18,20,23,24,26,28,31} ;
+
+	for (int i = 0 ; i< 19;i++){
+		set_led_color(x[i],255,0,0);
+	}
+
+	ws2812_apply_colors();
+}
+
+
 void ws2812_set_color_matrix(uint8_t red, uint8_t green, uint8_t blue){
 
 	for (int i = 0; i < N_LEDS; i++)

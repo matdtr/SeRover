@@ -74,11 +74,11 @@ double error_pre_speed_1 = 0;
 double error_pre_speed_2 = 0;
 double pid_i_pre1 = 0;
 double pid_i_pre2 = 0;
-//double kr = 0.6;
+//double kr = 0.65;
 //double kf = 0.9;
 
 double kr= 0.65;
-double kf= 0.9;
+double kf= 0.95;
 
 
 int true = 1;
@@ -156,7 +156,7 @@ int main(void)
   HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 0, 0);
 
   HAL_TIM_Base_Init(&htim11);
-  //HAL_TIM_Base_Start_IT(&htim11);
+  HAL_TIM_Base_Start_IT(&htim11);
 
 
   char data3[100];
@@ -171,6 +171,7 @@ int main(void)
   int blue = 0;
   int i = 0;
   int go = 0;
+  int am = 0;
   t_motorcommand cmd;
   uint16_t new_speed1 = 0;
   uint16_t new_speed2 = 0;
@@ -215,6 +216,7 @@ int main(void)
 				controls_from_command(cmd.command, cmd.value, cmd.value);
 				speed1 = AUTOMODE_SPEED;
 				speed2 = speed1;
+				//ws2812_auto_mode();
 				break;
 			case 101:
 				//automode stop
@@ -225,6 +227,7 @@ int main(void)
 				speed1 = 0;
 				speed2 = 0;
 				stop_motors(&huart6);
+				am = 3;
 				break;
 			case 102:
 				// get info
@@ -278,7 +281,8 @@ int main(void)
 		/* Leggi i sonar per la guida autonoma */
 		if (autonoma == 1){
 
-			/*  if(true == 1 && stop_sonar == 0){
+
+		  if(true == 1 && stop_sonar == 0){
 				front_sonar = read_range(&hi2c1,FRONT_SONAR_ADDR);
 				stop_sonar = 1;
 				sprintf(data3, "sonar 1 %d \n\r", front_sonar);
@@ -290,24 +294,24 @@ int main(void)
 				sprintf(data3, "Sonar 2 %d \n\r", rear_sonar);
 				HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 
-			} */
+			}
 
-			/*if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
-				if((front_sonar != 0) || (go != 0)){
+			if( (front_sonar > MIN_DISTANCE || front_sonar == 0) && (rear_sonar > MIN_DISTANCE || rear_sonar == 0) ){
+				if((front_sonar != 0) || (go != 0) || (rear_sonar != 0)){
 					speed1 = AUTOMODE_SPEED;
 					speed2= AUTOMODE_SPEED;
 					read_line(&cmd);
 					go = 1;
 				}
 			}else{
-				if((front_sonar != 0) || (go != 1)){
+				if((front_sonar != 0) || (go != 1) || (rear_sonar != 0)){
 					stop_motors(&huart6);
 					speed1 = 0;
 					speed2 = 0;
 					go = 0;
 				}
 
-			} */
+			}
 
 			read_line(&cmd);
 
@@ -397,13 +401,13 @@ void read_line(t_motorcommand* cmd){
 		pippo = 3;
 
 	}else if ((ADC_BUF[LEFT_DET] > LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] < LINE_DET_LIM)){
-		speed1 = (kf*AUTOMODE_SPEED);
+		speed1 = (kf*AUTOMODE_SPEED)+1;
 		speed2 = kr*AUTOMODE_SPEED;
 		cmd->command = 10; // giro a dx essendo il centrale e quello a dx nostra bassi
 		pippo = 4;
 
 	}else if((ADC_BUF[LEFT_DET] < LINE_DET_LIM) && (ADC_BUF[CENTER_DET] > LINE_DET_LIM) && (ADC_BUF[RIGHT_DET] > LINE_DET_LIM)){
-		speed2 = (kf*AUTOMODE_SPEED);
+		speed2 = (kf*AUTOMODE_SPEED)+1;
 		speed1 = (kr*AUTOMODE_SPEED);
 		cmd->command = 11; //giro a sx essendo il centrale e quello a sx nostra basso
 		pippo = 5;

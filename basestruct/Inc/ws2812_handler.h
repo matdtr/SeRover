@@ -37,6 +37,9 @@ void ws2812_apply_colors();
  */
 void set_led_color(uint32_t LEDnumber, uint8_t RED, uint8_t GREEN, uint8_t BLUE);
 
+void ws2812_auto_mode();
+
+
 //void ws2812_turn_off_leds();
 //void ws2812_fadeEffect( uint8_t maxLevel );
 //void ws2812_setColor(int ledIdx, const uint8_t *color);
