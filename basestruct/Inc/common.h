@@ -29,6 +29,6 @@ void parse_command(char* c, t_motorcommand* motorcommand);
 /*
  *  Send sensors info to Web Application
  */
-void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int bright, uint16_t range_sonar1, uint16_t range_sonar2, uint8_t line1, uint8_t line2, uint8_t line3);
+void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int bright, uint16_t range_sonar1, uint16_t range_sonar2, uint32_t line1, uint32_t line2, uint32_t line3);
 
 #endif // COMMON_H_
