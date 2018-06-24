@@ -131,7 +131,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
-  MX_TIM5_Init(); // non utilizzato al momento
+  MX_TIM5_Init();
   MX_TIM11_Init();
 
   MX_USART6_UART_Init();
@@ -310,9 +310,6 @@ int main(void)
 				}
 
 			}
-
-			read_line(&cmd);
-
 
 
 		}
