@@ -162,8 +162,6 @@ int main(void)
   char data3[100];
   uint16_t cnt1 = 0;
   uint16_t cnt2 = 0;
-  uint16_t range_sonar1 = 0;
-  uint16_t range_sonar2 = 0;
   char c[11];
   int brightness = 0;
   int red = 0;
@@ -231,7 +229,7 @@ int main(void)
 				break;
 			case 102:
 				// get info
-				get_sensors_info(&huart1, motor_speed, brightness, range_sonar1, range_sonar2, ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
+				get_sensors_info(&huart1, motor_speed, brightness, front_sonar, rear_sonar, ADC_BUF[LEFT_DET], ADC_BUF[CENTER_DET], ADC_BUF[RIGHT_DET]);
 				break;
 			case 99:
 				// setup led
@@ -326,8 +324,6 @@ int main(void)
 			new_speed1 = motor_encoder(&htim4, &cnt1, speed1, new_speed1, &motor_speed, &error_pre_speed_1, &pid_i_pre1, &cmd, diff);
 			new_speed2 = motor_encoder(&htim3, &cnt2, speed2, new_speed2, &motor_speed, &error_pre_speed_2, &pid_i_pre2, &cmd,  diff);
 
-			//sprintf(data3, "Speed %d --- %d \n\r",new_speed1, new_speed2);
-			//HAL_UART_Transmit(&huart2, (uint8_t*) data3, strlen(data3),0xFFFFFF);
 			controls_from_command(cmd.command, new_speed1, new_speed2);
 
 			cnt1 = __HAL_TIM_GET_COUNTER(&htim4);

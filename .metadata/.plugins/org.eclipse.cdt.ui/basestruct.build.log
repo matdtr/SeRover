@@ -1,10 +1,193 @@
-13:27:45 **** Incremental Build of configuration Debug for project basestruct ****
+15:23:58 **** Incremental Build of configuration Debug for project basestruct ****
 make all 
+Building file: ../Src/adc.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/adc.d" -MT"Src/adc.o" -o "Src/adc.o" "../Src/adc.c"
+Finished building: ../Src/adc.c
+ 
+Building file: ../Src/common.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/common.d" -MT"Src/common.o" -o "Src/common.o" "../Src/common.c"
+../Src/common.c: In function 'get_sensors_info':
+../Src/common.c:20:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:22:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:24:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:26:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:28:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:30:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+../Src/common.c:32:52: warning: passing argument 1 of 'strlen' from incompatible pointer type [-Wincompatible-pointer-types]
+  HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
+                                                    ^
+In file included from /Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/stdio.h:29:0,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:48,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:45,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/stm32f4xx_hal_conf.h:244,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:46,
+                 from /Users/ugopalatucci/Desktop/SeRover/basestruct/Inc/common.h:5,
+                 from ../Src/common.c:8:
+/Applications/Ac6/SystemWorkbench.app/Contents/Eclipse/plugins/fr.ac6.mcu.externaltools.arm-none.macos64_1.15.0.201708311556/tools/compiler/arm-none-eabi/include/string.h:37:9: note: expected 'const char *' but argument is of type 'char (*)[30]'
+ size_t  _EXFUN(strlen,(const char *));
+         ^
+Finished building: ../Src/common.c
+ 
+Building file: ../Src/gpio.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/gpio.d" -MT"Src/gpio.o" -o "Src/gpio.o" "../Src/gpio.c"
+../Src/gpio.c: In function 'MX_GPIO_Init':
+../Src/gpio.c:58:20: warning: unused variable 'GPIO_InitStruct' [-Wunused-variable]
+   GPIO_InitTypeDef GPIO_InitStruct;
+                    ^~~~~~~~~~~~~~~
+Finished building: ../Src/gpio.c
+ 
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'main':
+../Src/main.c:214:5: warning: implicit declaration of function 'controls_from_command' [-Wimplicit-function-declaration]
+     controls_from_command(cmd.command, cmd.value, cmd.value);
+     ^~~~~~~~~~~~~~~~~~~~~
+../Src/main.c:301:6: warning: implicit declaration of function 'read_line' [-Wimplicit-function-declaration]
+      read_line(&cmd);
+      ^~~~~~~~~
+../Src/main.c:172:7: warning: variable 'am' set but not used [-Wunused-but-set-variable]
+   int am = 0;
+       ^~
+../Src/main.c: At top level:
+../Src/main.c:341:6: warning: conflicting types for 'controls_from_command'
+ void controls_from_command(int command, uint16_t new_speed1, uint16_t new_speed2){
+      ^~~~~~~~~~~~~~~~~~~~~
+../Src/main.c:214:5: note: previous implicit declaration of 'controls_from_command' was here
+     controls_from_command(cmd.command, cmd.value, cmd.value);
+     ^~~~~~~~~~~~~~~~~~~~~
+../Src/main.c:377:6: warning: conflicting types for 'read_line'
+ void read_line(t_motorcommand* cmd){
+      ^~~~~~~~~
+../Src/main.c:301:6: note: previous implicit declaration of 'read_line' was here
+      read_line(&cmd);
+      ^~~~~~~~~
+Finished building: ../Src/main.c
+ 
 Building file: ../Src/motor_handler.c
 Invoking: MCU GCC Compiler
 /Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/motor_handler.d" -MT"Src/motor_handler.o" -o "Src/motor_handler.o" "../Src/motor_handler.c"
 Finished building: ../Src/motor_handler.c
+ 
+Building file: ../Src/sonar_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/sonar_handler.d" -MT"Src/sonar_handler.o" -o "Src/sonar_handler.o" "../Src/sonar_handler.c"
+../Src/sonar_handler.c: In function 'sonar_Init':
+../Src/sonar_handler.c:37:16: warning: 'gain_pointer' is used uninitialized in this function [-Wuninitialized]
+  *gain_pointer = gain;
+  ~~~~~~~~~~~~~~^~~~~~
+Finished building: ../Src/sonar_handler.c
+ 
+Building file: ../Src/tim.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/tim.d" -MT"Src/tim.o" -o "Src/tim.o" "../Src/tim.c"
+Finished building: ../Src/tim.c
+ 
+Building file: ../Src/ws2812_handler.c
+Invoking: MCU GCC Compiler
+/Users/ugopalatucci/Desktop/SeRover/basestruct/Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed="__attribute__((__packed__))"' -DUSE_HAL_DRIVER -DSTM32F401xE -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"/Users/ugopalatucci/Desktop/SeRover/basestruct/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/ws2812_handler.d" -MT"Src/ws2812_handler.o" -o "Src/ws2812_handler.o" "../Src/ws2812_handler.c"
+../Src/ws2812_handler.c: In function 'ws2812_init_leds':
+../Src/ws2812_handler.c:21:2: warning: implicit declaration of function 'fillBufferBlack' [-Wimplicit-function-declaration]
+  fillBufferBlack();
+  ^~~~~~~~~~~~~~~
+../Src/ws2812_handler.c: At top level:
+../Src/ws2812_handler.c:33:6: warning: conflicting types for 'fillBufferBlack'
+ void fillBufferBlack() {
+      ^~~~~~~~~~~~~~~
+../Src/ws2812_handler.c:21:2: note: previous implicit declaration of 'fillBufferBlack' was here
+  fillBufferBlack();
+  ^~~~~~~~~~~~~~~
+../Src/ws2812_handler.c: In function 'ws2812_auto_mode':
+../Src/ws2812_handler.c:59:18: warning: iteration 18 invokes undefined behavior [-Waggressive-loop-optimizations]
+   set_led_color(x[i],255,0,0);
+                 ~^~~
+../Src/ws2812_handler.c:58:2: note: within this loop
+  for (int i = 0 ; i< 19;i++){
+  ^~~
+Finished building: ../Src/ws2812_handler.c
  
 Building target: basestruct.elf
 Invoking: MCU GCC Linker
@@ -16,8 +199,8 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "basestruct.elf" "basestruct.bin"
 arm-none-eabi-size "basestruct.elf"
    text	   data	    bss	    dec	    hex	filename
-  33136	    516	   6136	  39788	   9b6c	basestruct.elf
+  33176	    516	   6136	  39828	   9b94	basestruct.elf
  
 
-13:27:46 Build Finished (took 702ms)
+15:24:01 Build Finished (took 3s.68ms)
 
