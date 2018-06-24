@@ -14,7 +14,7 @@ void reset_commands(t_motorcommand* motorcommand){
 }
 
 
-void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int bright, uint16_t range_sonar1, uint16_t range_sonar2, uint8_t line1, uint8_t line2, uint8_t line3){
+void get_sensors_info(UART_HandleTypeDef* huart, uint16_t motor_speed, int bright, uint16_t range_sonar1, uint16_t range_sonar2, uint32_t line1, uint32_t line2, uint32_t line3){
 	char data [30];
 	sprintf(data, "Motor speed: %u\n", motor_speed);
 	HAL_UART_Transmit(huart, (uint8_t*) &data, strlen(&data),0xFFFFFF);
